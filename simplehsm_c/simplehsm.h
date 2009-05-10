@@ -34,12 +34,17 @@ typedef int stnext;
 typedef stnext (*stfunc)(int, void*);
 typedef stfunc (*ptrstfunc)(int, void*);
 
+typedef struct
+{
+  stfunc curState;
+} SimpleHsm;
+
 //
 // State utility function definitions
 //
 
-void InitialState(stfunc newState);
-void TransitionState(stfunc newState);
-void InitTransitionState(stfunc newState);
-void SignalCurrentState(int signal, void* param);
-BOOL IsInState(stfunc state);
+void InitialState(SimpleHsm* hsm, stfunc newState);
+void TransitionState(SimpleHsm* hsm, stfunc newState);
+void InitTransitionState(SimpleHsm* hsm, stfunc newState);
+void SignalCurrentState(SimpleHsm* hsm, int signal, void* param);
+BOOL IsInState(SimpleHsm* hsm, stfunc state);

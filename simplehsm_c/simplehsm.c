@@ -7,21 +7,15 @@
 #include "simplehsm.h"
 
 //
-// Current state variable
-//
-
-stfunc curState = NULL;
-
-//
 // State utility function implementations
 //
 
-void InitialState(stfunc newState)
+void InitialState(SimpleHsm* hsm, stfunc newState)
 {
-  InitTransitionState(newState);
+  InitTransitionState(hsm, newState);
 }
 
-BOOL IsParent(stfunc parentState, stfunc childState)
+BOOL IsParent(SimpleHsm* hsm, stfunc parentState, stfunc childState)
 {
   do 
   {
@@ -33,15 +27,15 @@ BOOL IsParent(stfunc parentState, stfunc childState)
   return FALSE;
 }
 
-void TransitionState(stfunc newState)
+void TransitionState(SimpleHsm* hsm, stfunc newState)
 {
   // exit signal to current state
-  if (curState != NULL)
+  if (hsm->curState != NULL)
   {
     stfunc parentState;
-    curState(SIG_EXIT, NULL);
-    parentState = (stfunc)curState(SIG_NULL, NULL);
-    while (!IsParent(parentState, newState))
+    hsm->curState(SIG_EXIT, NULL);
+    parentState = (stfunc)hsm->curState(SIG_NULL, NULL);
+    while (!IsParent(hsm, parentState, newState))
     {
       parentState(SIG_EXIT, NULL);
       parentState = (stfunc)parentState(SIG_NULL, NULL);
@@ -50,24 +44,24 @@ void TransitionState(stfunc newState)
   else
     printf("TransitionState: ERROR - current state is invalid!");
   
-  InitTransitionState(newState);
+  InitTransitionState(hsm, newState);
 }
 
-void InitTransitionState(stfunc newState)
+void InitTransitionState(SimpleHsm* hsm, stfunc newState)
 {
   // set new state
-  curState = newState;
+  hsm->curState = newState;
   // entry signal to current state
-  SignalCurrentState(SIG_ENTRY, NULL);
+  SignalCurrentState(hsm, SIG_ENTRY, NULL);
   // init signal to current state
-  SignalCurrentState(SIG_INIT, NULL);
+  SignalCurrentState(hsm, SIG_INIT, NULL);
 }
 
-void SignalCurrentState(int signal, void* param)
+void SignalCurrentState(SimpleHsm* hsm, int signal, void* param)
 {
-  if (curState != NULL)
+  if (hsm->curState != NULL)
   {
-    stfunc parentState = curState;
+    stfunc parentState = hsm->curState;
     do
       parentState = (stfunc)parentState(signal, param);
     while (parentState != NULL);
@@ -76,9 +70,9 @@ void SignalCurrentState(int signal, void* param)
     printf("SignalCurrentState: ERROR - current state is invalid!\n");
 }
 
-BOOL IsInState(stfunc state)
+BOOL IsInState(SimpleHsm* hsm, stfunc state)
 {
-  stfunc parentState = curState;
+  stfunc parentState = hsm->curState;
   do
   {
     if (state == parentState)
