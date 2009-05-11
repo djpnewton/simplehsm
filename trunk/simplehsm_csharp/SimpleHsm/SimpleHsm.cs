@@ -75,21 +75,48 @@ namespace SimpleHsm
                     parentState(new StateEvent(Signal.Exit));
                     parentState = parentState(new StateEvent(Signal.Null));
                 }
+                // set current state to parent state
+                curState = parentState;
             }
             else
                 System.Console.WriteLine("TransitionState: ERROR - current state is invalid!");
 
-            InitTransitionState(newState);
+            // entry signal to new state
+            while (curState != newState)
+            {
+                StateDelegate parentState = newState;
+                StateDelegate lastChild = newState;
+                while (true)
+                {
+                    parentState = parentState(new StateEvent(Signal.Null));
+                    if (parentState == curState)
+                    {
+                        lastChild(new StateEvent(Signal.Entry));
+                        // set current state to last child state
+                        curState = lastChild;
+                        break;
+                    }
+                    lastChild = parentState;
+                }
+            }
+
+            // init signal to new state
+            newState(new StateEvent(Signal.Init));
         }
 
         protected void InitTransitionState(StateDelegate newState)
         {
             // set new state
             curState = newState;
-            // entry signal to current state
-            SignalCurrentState(new StateEvent(Signal.Entry));
-            // init signal to current state
-            SignalCurrentState(new StateEvent(Signal.Init));
+            if (curState != null)
+            {
+                // entry signal to current state
+                curState(new StateEvent(Signal.Entry));
+                // init signal to current state
+                curState(new StateEvent(Signal.Init));
+            }
+            else
+                System.Console.WriteLine("InitTransitionState: ERROR - current state is invalid!\n");
         }
 
         public void SignalCurrentState(StateEvent e)
