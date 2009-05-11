@@ -40,21 +40,48 @@ void TransitionState(SimpleHsm* hsm, stfunc newState)
       parentState(SIG_EXIT, NULL);
       parentState = (stfunc)parentState(SIG_NULL, NULL);
     }
+    // set current state to parent state
+    hsm->curState = parentState;
   }
   else
     printf("TransitionState: ERROR - current state is invalid!");
   
-  InitTransitionState(hsm, newState);
+  // entry signal to new state
+  while (hsm->curState != newState)
+  {
+    stfunc parentState = newState;
+    stfunc lastChild = newState;
+    while (TRUE)
+    {
+      parentState = parentState(SIG_NULL, NULL);
+      if (parentState == hsm->curState)
+      {
+        lastChild(SIG_ENTRY, NULL);
+        // set current state to last child state
+        hsm->curState = lastChild;
+        break;
+      }
+      lastChild = parentState;
+    }
+  }
+
+  // init signal to new state
+  newState(SIG_INIT, NULL);
 }
 
 void InitTransitionState(SimpleHsm* hsm, stfunc newState)
 {
   // set new state
   hsm->curState = newState;
-  // entry signal to current state
-  SignalCurrentState(hsm, SIG_ENTRY, NULL);
-  // init signal to current state
-  SignalCurrentState(hsm, SIG_INIT, NULL);
+  if (hsm->curState != NULL)
+  {
+    // entry signal to current state
+    hsm->curState(SIG_ENTRY, NULL);
+    // init signal to current state
+    hsm->curState(SIG_INIT, NULL);
+  }
+  else
+    printf("InitTransitionState: ERROR - current state is invalid!\n");
 }
 
 void SignalCurrentState(SimpleHsm* hsm, int signal, void* param)
