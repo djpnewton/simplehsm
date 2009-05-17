@@ -8,7 +8,6 @@ using SimpleHsm;
  * 
  * - handle errors
  * - delete terminate signal from calc.png chart?
- * - remove OPER transition from 'ready' to 'opEntered'?
  * 
  */
 
@@ -139,6 +138,7 @@ namespace Calc
                     InitTransitionState(begin);
                     return null;
                 case (Signal)CalcSignal.Operator:
+                    _operator = ((CalcEvent)e).Key;
                     TransitionState(opEntered);
                     return null;
                 case (Signal)CalcSignal.Digit0:
@@ -169,6 +169,7 @@ namespace Calc
             {
                 case Signal.Entry:
                     Zero();
+                    _operand1 = 0;
                     return null;
                 case (Signal)CalcSignal.Operator:
                     if (((CalcEvent)e).Key == '-')
@@ -351,7 +352,8 @@ namespace Calc
                     //TODO on error TransitionState(error);
                     return null;
                 case (Signal)CalcSignal.Equals:
-                    textBox.Text = Update(_operand1, Convert.ToDouble(textBox.Text), _operator).ToString();
+                    _operand1 = Update(_operand1, Convert.ToDouble(textBox.Text), _operator);
+                    textBox.Text = _operand1.ToString();
                     TransitionState(result);
                     //TODO on error TransitionState(error);
                     return null;
