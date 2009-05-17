@@ -252,25 +252,33 @@ class CalcHsm(SimpleHsm):
             self.TransitionState(self.opEntered)
             return None
         elif state_event.sig == SIG_OPERATOR:
-            self._operand1 = self.Update(self._operand1, float(self.entry.get()), self._operator)
-            self._operator = state_event.key
-            self.entry.delete(0, END)
-            val = str(self._operand1)
-            if val[-2:] == ".0":
-                val = val[0:-2]
-            self.entry.insert(END, val)
-            self.TransitionState(self.opEntered)
-            #TODO on error TransitionState(error)
+            try:
+                self._operand1 = self.Update(self._operand1, float(self.entry.get()), self._operator)
+                self._operator = state_event.key
+                self.entry.delete(0, END)
+                val = str(self._operand1)
+                if val[-2:] == ".0":
+                    val = val[0:-2]
+                self.entry.insert(END, val)
+                self.TransitionState(self.opEntered)
+            except:
+                self.entry.delete(0, END)
+                self.entry.insert(END, "ERROR")
+                self.TransitionState(self.error)
             return None
         elif state_event.sig == SIG_EQUALS:
-            self._operand1 = self.Update(self._operand1, float(self.entry.get()), self._operator)
-            self.entry.delete(0, END)
-            val = str(self._operand1)
-            if val[-2:] == ".0":
-                val = val[0:-2]
-            self.entry.insert(END, val)
-            self.TransitionState(self.result)
-            #TODO on error TransitionState(error);
+            try:
+                self._operand1 = self.Update(self._operand1, float(self.entry.get()), self._operator)
+                self.entry.delete(0, END)
+                val = str(self._operand1)
+                if val[-2:] == ".0":
+                    val = val[0:-2]
+                self.entry.insert(END, val)
+                self.TransitionState(self.result)
+            except:
+                self.entry.delete(0, END)
+                self.entry.insert(END, "ERROR")
+                self.TransitionState(self.error)
             return None
         return self.on
 
