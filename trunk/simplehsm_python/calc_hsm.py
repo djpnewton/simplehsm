@@ -100,6 +100,7 @@ class CalcHsm(SimpleHsm):
             self.InitTransitionState(self.begin)
             return None
         elif state_event.sig == SIG_OPERATOR:
+            self._operator = state_event.key
             self.TransitionState(self.opEntered)
             return None
         elif state_event.sig == SIG_DIGIT_0:
@@ -123,6 +124,7 @@ class CalcHsm(SimpleHsm):
     def begin(self, state_event):
         if state_event.sig == SIG_ENTRY:
             self.Zero()
+            self._operand1 = 0
             return None
         elif state_event.sig == SIG_OPERATOR:
             if state_event.key == '-':
@@ -253,14 +255,20 @@ class CalcHsm(SimpleHsm):
             self._operand1 = self.Update(self._operand1, float(self.entry.get()), self._operator)
             self._operator = state_event.key
             self.entry.delete(0, END)
-            self.entry.insert(END, str(self._operand1))
+            val = str(self._operand1)
+            if val[-2:] == ".0":
+                val = val[0:-2]
+            self.entry.insert(END, val)
             self.TransitionState(self.opEntered)
             #TODO on error TransitionState(error)
             return None
         elif state_event.sig == SIG_EQUALS:
-            res = str(self.Update(self._operand1, float(self.entry.get()), self._operator))
+            self._operand1 = self.Update(self._operand1, float(self.entry.get()), self._operator)
             self.entry.delete(0, END)
-            self.entry.insert(END, res)
+            val = str(self._operand1)
+            if val[-2:] == ".0":
+                val = val[0:-2]
+            self.entry.insert(END, val)
             self.TransitionState(self.result)
             #TODO on error TransitionState(error);
             return None
