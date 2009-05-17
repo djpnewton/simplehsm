@@ -29,8 +29,8 @@ enum
 // State machine definitions
 //
 
-#define stnone 0;
-typedef int stnext;
+#define stnone NULL;
+typedef void* stnext;
 typedef stnext (*stfunc)(int, void*);
 typedef stfunc (*ptrstfunc)(int, void*);
 
