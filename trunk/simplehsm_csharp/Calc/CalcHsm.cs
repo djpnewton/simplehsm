@@ -4,13 +4,6 @@ using System.Text;
 using System.Windows.Forms;
 using SimpleHsm;
 
-/* TODO
- * 
- * - handle errors
- * - delete terminate signal from calc.png chart?
- * 
- */
-
 namespace Calc
 {
     //
@@ -345,17 +338,31 @@ namespace Calc
                     TransitionState(opEntered);
                     return null;
                 case (Signal)CalcSignal.Operator:
-                    _operand1 = Update(_operand1, Convert.ToDouble(textBox.Text), _operator);
-                    _operator = ((CalcEvent)e).Key;
-                    textBox.Text = _operand1.ToString();
-                    TransitionState(opEntered);
-                    //TODO on error TransitionState(error);
+                    try
+                    {
+                        _operand1 = Update(_operand1, Convert.ToDouble(textBox.Text), _operator);
+                        _operator = ((CalcEvent)e).Key;
+                        textBox.Text = _operand1.ToString();
+                        TransitionState(opEntered);
+                    }
+                    catch
+                    {
+                        textBox.Text = "ERROR";
+                        TransitionState(error);
+                    }
                     return null;
                 case (Signal)CalcSignal.Equals:
-                    _operand1 = Update(_operand1, Convert.ToDouble(textBox.Text), _operator);
-                    textBox.Text = _operand1.ToString();
-                    TransitionState(result);
-                    //TODO on error TransitionState(error);
+                    try
+                    {
+                        _operand1 = Update(_operand1, Convert.ToDouble(textBox.Text), _operator);
+                        textBox.Text = _operand1.ToString();
+                        TransitionState(result);
+                    }
+                    catch
+                    {
+                        textBox.Text = "ERROR";
+                        TransitionState(error);
+                    }
                     return null;
             }
             return on;
