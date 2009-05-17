@@ -122,7 +122,7 @@ namespace Calc
                     return null;
                 case (Signal)CalcSignal.Clear:
                     TransitionState(on);
-                    break;
+                    return null;
             }
             return null;
         }
