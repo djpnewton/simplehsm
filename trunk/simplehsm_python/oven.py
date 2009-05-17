@@ -29,64 +29,64 @@ class Oven(simplehsm.SimpleHsm):
     # Oven State implementations
     #
 
-    def oven(self, signal, param):
-        if (signal == simplehsm.SIG_ENTRY):
+    def oven(self, state_event):
+        if (state_event.sig == simplehsm.SIG_ENTRY):
             print "oven: entering state"
             return None
-        elif (signal == simplehsm.SIG_INIT):
+        elif (state_event.sig == simplehsm.SIG_INIT):
             self.InitTransitionState(self.heating)
             return None
-        elif (signal == simplehsm.SIG_EXIT):
+        elif (state_event.sig == simplehsm.SIG_EXIT):
             print "oven: exiting state"
             return None
         return None
 
-    def heating(self, signal, param):
+    def heating(self, state_event):
         global SIG_OPEN_DOOR
-        if (signal == simplehsm.SIG_ENTRY):
+        if (state_event.sig == simplehsm.SIG_ENTRY):
             print "  heating: entering state"
             return None
-        elif (signal == simplehsm.SIG_INIT):
+        elif (state_event.sig == simplehsm.SIG_INIT):
             self.InitTransitionState(self.toasting);
             return None
-        elif (signal == simplehsm.SIG_EXIT):
+        elif (state_event.sig == simplehsm.SIG_EXIT):
             print "  heating: exiting state"
             return None
-        elif (signal == SIG_OPEN_DOOR):
+        elif (state_event.sig == SIG_OPEN_DOOR):
             print "  heating: OPEN_DOOR signal!"
             self.TransitionState(self.doorOpen)
             return None;
         return self.oven;
 
-    def toasting(self, signal, param):
-        if (signal == simplehsm.SIG_ENTRY):
+    def toasting(self, state_event):
+        if (state_event.sig == simplehsm.SIG_ENTRY):
             print "    toasting: entering state"
             return None
-        elif (signal == simplehsm.SIG_INIT):
+        elif (state_event.sig == simplehsm.SIG_INIT):
             return None
-        elif (signal == simplehsm.SIG_EXIT):
+        elif (state_event.sig == simplehsm.SIG_EXIT):
             print "    toasting: exiting state"
             return None
         return self.heating
 
-    def baking(self, signal, param):
-        if (signal == simplehsm.SIG_ENTRY):
+    def baking(self, state_event):
+        if (state_event.sig == simplehsm.SIG_ENTRY):
             print "    baking: entering state"
             return None
-        elif (signal == simplehsm.SIG_INIT):
+        elif (state_event.sig == simplehsm.SIG_INIT):
             return None
-        elif (signal == simplehsm.SIG_EXIT):
+        elif (state_event.sig == simplehsm.SIG_EXIT):
             print "    baking: exiting state"
             return None
         return self.heating
 
-    def doorOpen(self, signal, param):
-        if (signal == simplehsm.SIG_ENTRY):
+    def doorOpen(self, state_event):
+        if (state_event.sig == simplehsm.SIG_ENTRY):
             print "  doorOpen: entering state"
             return None;
-        elif (signal == simplehsm.SIG_INIT):
+        elif (state_event.sig == simplehsm.SIG_INIT):
             return None;
-        elif (signal == simplehsm.SIG_EXIT):
+        elif (state_event.sig == simplehsm.SIG_EXIT):
             print "  doorOpen: exiting state"
             return None;
         return self.oven
@@ -97,7 +97,7 @@ class Oven(simplehsm.SimpleHsm):
 
 def main():
     oven = Oven()
-    oven.SignalCurrentState(SIG_OPEN_DOOR, None)
+    oven.SignalCurrentState(simplehsm.StateEvent(SIG_OPEN_DOOR))
     oven.ShowStatus()
 
 main()
