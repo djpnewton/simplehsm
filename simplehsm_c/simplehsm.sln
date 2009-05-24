@@ -3,12 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "simplehsm", "simplehsm\simplehsm.vcproj", "{5ED3CB59-07E3-4786-9052-BEB8C1606E5C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oven", "oven\oven.vcproj", "{3AD2B631-D2F5-4ED7-A5EC-EB7C174554D1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "calc", "calc\calc.vcproj", "{C5CAA5D7-51A8-4223-A1DF-F9A7F8D1CB81}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5ED3CB59-07E3-4786-9052-BEB8C1606E5C} = {5ED3CB59-07E3-4786-9052-BEB8C1606E5C}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "calc", "calc\calc.vcproj", "{C5CAA5D7-51A8-4223-A1DF-F9A7F8D1CB81}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oven", "oven\oven.vcproj", "{742EE97D-9969-4D7D-9565-262DECD3B752}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5ED3CB59-07E3-4786-9052-BEB8C1606E5C} = {5ED3CB59-07E3-4786-9052-BEB8C1606E5C}
 	EndProjectSection
@@ -23,14 +23,14 @@ Global
 		{5ED3CB59-07E3-4786-9052-BEB8C1606E5C}.Debug|Win32.Build.0 = Debug|Win32
 		{5ED3CB59-07E3-4786-9052-BEB8C1606E5C}.Release|Win32.ActiveCfg = Release|Win32
 		{5ED3CB59-07E3-4786-9052-BEB8C1606E5C}.Release|Win32.Build.0 = Release|Win32
-		{3AD2B631-D2F5-4ED7-A5EC-EB7C174554D1}.Debug|Win32.ActiveCfg = Debug|Win32
-		{3AD2B631-D2F5-4ED7-A5EC-EB7C174554D1}.Debug|Win32.Build.0 = Debug|Win32
-		{3AD2B631-D2F5-4ED7-A5EC-EB7C174554D1}.Release|Win32.ActiveCfg = Release|Win32
-		{3AD2B631-D2F5-4ED7-A5EC-EB7C174554D1}.Release|Win32.Build.0 = Release|Win32
 		{C5CAA5D7-51A8-4223-A1DF-F9A7F8D1CB81}.Debug|Win32.ActiveCfg = Debug|Win32
 		{C5CAA5D7-51A8-4223-A1DF-F9A7F8D1CB81}.Debug|Win32.Build.0 = Debug|Win32
 		{C5CAA5D7-51A8-4223-A1DF-F9A7F8D1CB81}.Release|Win32.ActiveCfg = Release|Win32
 		{C5CAA5D7-51A8-4223-A1DF-F9A7F8D1CB81}.Release|Win32.Build.0 = Release|Win32
+		{742EE97D-9969-4D7D-9565-262DECD3B752}.Debug|Win32.ActiveCfg = Debug|Win32
+		{742EE97D-9969-4D7D-9565-262DECD3B752}.Debug|Win32.Build.0 = Debug|Win32
+		{742EE97D-9969-4D7D-9565-262DECD3B752}.Release|Win32.ActiveCfg = Release|Win32
+		{742EE97D-9969-4D7D-9565-262DECD3B752}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
