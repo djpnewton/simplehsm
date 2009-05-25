@@ -40,10 +40,10 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\Tcl\include;..\simplehsm"
+				AdditionalIncludeDirectories="C:\projects\iup\include;..\simplehsm"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -58,8 +58,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="C:\Tcl\lib\tcl85.lib C:\Tcl\lib\tclstub85.lib C:\Tcl\lib\tk85.lib C:\Tcl\lib\tkstub85.lib"
-				AdditionalLibraryDirectories=""
+				AdditionalDependencies="comctl32.lib iup.lib"
+				AdditionalLibraryDirectories="C:\projects\iup"
 				GenerateDebugInformation="true"
 				TargetMachine="1"
 			/>
@@ -83,6 +83,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="copy calc.led file to output directory"
+				CommandLine="xcopy $(InputDir)calc.led $(OutDir)"
 			/>
 		</Configuration>
 		<Configuration
@@ -112,8 +114,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="C:\Tcl\include"
-				RuntimeLibrary="2"
+				AdditionalIncludeDirectories="C:\projects\iup\include;..\simplehsm"
+				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
 				DebugInformationFormat="3"
@@ -129,7 +131,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="C:\Tcl\lib\tcl85.lib C:\Tcl\lib\tclstub85.lib C:\Tcl\lib\tk85.lib C:\Tcl\lib\tkstub85.lib"
+				AdditionalDependencies="comctl32.lib iup.lib"
+				AdditionalLibraryDirectories="C:\projects\iup"
 				GenerateDebugInformation="true"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -155,6 +158,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="copy calc.led file to output directory"
+				CommandLine="xcopy $(InputDir)calc.led $(OutDir)"
 			/>
 		</Configuration>
 	</Configurations>
@@ -186,6 +191,10 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+			<File
+				RelativePath=".\calc.led"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

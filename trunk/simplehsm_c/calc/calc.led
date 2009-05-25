@@ -1,0 +1,50 @@
+main = DIALOG [TITLE="calc", SIZE=140]
+(
+    VBOX 
+    (
+        HBOX 
+        (
+            FILL(),
+            TEXT [SIZE=250, CANFOCUS=FALSE, READONLY=TRUE](NULL),
+            FILL()
+        ),
+        HBOX 
+        (
+            FILL(),
+            BUTTON [SIZE=50x30]("7", btnClick),
+            BUTTON [SIZE=50x30]("8", btnClick),
+            BUTTON [SIZE=50x30]("9", btnClick),
+            BUTTON [SIZE=50x30]("/", btnClick),
+            BUTTON [SIZE=50x30]("C", btnClick),
+            FILL()
+        ),
+        HBOX
+        (
+            FILL(),
+            BUTTON [SIZE=50x30]("4", btnClick),
+            BUTTON [SIZE=50x30]("5", btnClick),
+            BUTTON [SIZE=50x30]("6", btnClick),
+            BUTTON [SIZE=50x30]("*", btnClick),
+            BUTTON [SIZE=50x30]("CE", btnClick),
+            FILL()
+        ),
+        HBOX
+        (
+            BUTTON [SIZE=50x30]("1", btnClick),
+            BUTTON [SIZE=50x30]("2", btnClick),
+            BUTTON [SIZE=50x30]("3", btnClick),
+            BUTTON [SIZE=50x30]("-", btnClick),
+            FILL()
+        ),
+        HBOX
+        (
+            FILL(),
+            BUTTON [SIZE=50x30]("0", btnClick),
+            BUTTON [SIZE=50x30](".", btnClick),
+            BUTTON [SIZE=50x30]("%", btnClick),
+            BUTTON [SIZE=50x30]("+", btnClick),
+            BUTTON [SIZE=50x30]("=", btnClick),
+            FILL()
+        )
+    )
+)

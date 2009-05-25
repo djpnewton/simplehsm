@@ -43,7 +43,7 @@
 				AdditionalIncludeDirectories="..\simplehsm"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -110,7 +110,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				RuntimeLibrary="2"
+				AdditionalIncludeDirectories="..\simplehsm"
+				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
 				DebugInformationFormat="3"
