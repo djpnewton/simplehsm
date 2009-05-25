@@ -84,7 +84,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="copy calc.led file to output directory"
-				CommandLine="xcopy $(InputDir)calc.led $(OutDir)"
+				CommandLine="xcopy /Y $(InputDir)calc.led $(OutDir)"
 			/>
 		</Configuration>
 		<Configuration
