@@ -4,11 +4,38 @@
 
 #include <iup.h>
 
-#include "simplehsm.h"
+#include "calcHsm.h"
 
 int btnClick(Ihandle* self)
 {
-  printf("self: %d\n", self);
+  char* c = IupGetAttribute(self, "TITLE");
+
+  if (strcmp(c, "0") == 0)
+    SignalCalcHsm(SIG_DIGIT0, NULL);
+  else if (strcmp(c, "1") == 0 ||
+           strcmp(c, "2") == 0 ||
+           strcmp(c, "3") == 0 ||
+           strcmp(c, "4") == 0 ||
+           strcmp(c, "5") == 0 ||
+           strcmp(c, "6") == 0 ||
+           strcmp(c, "7") == 0 ||
+           strcmp(c, "8") == 0 ||
+           strcmp(c, "9") == 0)
+    SignalCalcHsm(SIG_DIGIT1_9, c);
+  else if (strcmp(c, ".") == 0)
+    SignalCalcHsm(SIG_POINT, NULL);
+  else if (strcmp(c, "+") == 0 ||
+           strcmp(c, "-") == 0 ||
+           strcmp(c, "*") == 0 ||
+           strcmp(c, "/") == 0)
+    SignalCalcHsm(SIG_OPERATOR, c);
+  else if (strcmp(c, "C") == 0)
+    SignalCalcHsm(SIG_CLEAR, NULL);
+  else if (strcmp(c, "CE") == 0)
+    SignalCalcHsm(SIG_CLEARENTRY, NULL);
+  else if (strcmp(c, "=") == 0)
+    SignalCalcHsm(SIG_EQUALS, NULL);
+
   return EXIT_SUCCESS;
 }
 
@@ -33,6 +60,8 @@ int main(int argc, char **argv)
   AttachButtonEvents(IupGetHandle("main"));
   // show main window
   IupShow(IupGetHandle("main"));
+  // Initialse calc state machine
+  InitCalcHsm(IupGetHandle("textBox"));
   // start mainloop
   IupMainLoop();
   // close iup library

@@ -1,3 +1,8 @@
+//---------------------------------------------------------------------------
+#ifndef simplehsmH
+#define simplehsmH
+//---------------------------------------------------------------------------
+
 //
 // Boolean definitions
 //
@@ -48,3 +53,6 @@ void TransitionState(SimpleHsm* hsm, stfunc newState);
 void InitTransitionState(SimpleHsm* hsm, stfunc newState);
 void SignalCurrentState(SimpleHsm* hsm, int signal, void* param);
 BOOL IsInState(SimpleHsm* hsm, stfunc state);
+
+//---------------------------------------------------------------------------
+#endif  //simplehsmH

@@ -1,3 +1,7 @@
+# named controls
+textBox = TEXT [SIZE=250, CANFOCUS=FALSE, READONLY=TRUE](NULL)
+
+# main dialog
 main = DIALOG [TITLE="calc", SIZE=140]
 (
     VBOX 
@@ -5,7 +9,7 @@ main = DIALOG [TITLE="calc", SIZE=140]
         HBOX 
         (
             FILL(),
-            TEXT [SIZE=250, CANFOCUS=FALSE, READONLY=TRUE](NULL),
+            textBox,
             FILL()
         ),
         HBOX 
