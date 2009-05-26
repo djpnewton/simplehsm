@@ -175,6 +175,10 @@
 				RelativePath=".\calc.c"
 				>
 			</File>
+			<File
+				RelativePath=".\calcHsm.c"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -183,6 +187,10 @@
 			>
 			<File
 				RelativePath=".\calc.h"
+				>
+			</File>
+			<File
+				RelativePath=".\calcHsm.h"
 				>
 			</File>
 		</Filter>
