@@ -339,10 +339,13 @@ stnext operand2(int signal, void* param)
             _operand1 = update(_operand1, atof(IupGetAttribute(textbox, "VALUE")), _operator);
             _operator = *((char*)param);
             if (_operand1 == (double)((int)_operand1))
-                IupSetAttribute(textbox, "VALUE", itoa((int)_operand1, dblstr, 10));
+            {
+                _itoa_s((int)_operand1, dblstr, _CVTBUFSIZE, 10);
+                IupSetAttribute(textbox, "VALUE", dblstr);
+            }
             else
             {
-                sprintf(dblstr, "%f", _operand1);
+                sprintf_s(dblstr, _CVTBUFSIZE, "%f", _operand1);
                 IupSetAttribute(textbox, "VALUE", dblstr);
             }
             simplehsm_transition_state(&hsm, opEntered);
@@ -353,10 +356,13 @@ stnext operand2(int signal, void* param)
         case SIG_EQUALS:
             _operand1 = update(_operand1, atof(IupGetAttribute(textbox, "VALUE")), _operator);
             if (_operand1 == (double)((int)_operand1))
-                IupSetAttribute(textbox, "VALUE", itoa((int)_operand1, dblstr, 10));
+            {
+                _itoa_s((int)_operand1, dblstr, _CVTBUFSIZE, 10);
+                IupSetAttribute(textbox, "VALUE", dblstr);
+            }
             else
             {
-                sprintf(dblstr, "%f", _operand1);
+                sprintf_s(dblstr, _CVTBUFSIZE, "%f", _operand1);
                 IupSetAttribute(textbox, "VALUE", dblstr);
             }
             simplehsm_transition_state(&hsm, result);
