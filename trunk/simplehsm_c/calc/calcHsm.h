@@ -20,15 +20,15 @@ enum
     SIG_OPERATOR,
     SIG_POINT,
     SIG_EQUALS
-} CalcSignals;
+} calc_signals_t;
 
 
 //
 // Calc state machine public definitions
 //
 
-void InitCalcHsm(Ihandle* tb);
-void SignalCalcHsm(int signal, void* param);
+void calchsm_init(Ihandle* tb);
+void calchsm_signal(int signal, void* param);
 
 
 //---------------------------------------------------------------------------

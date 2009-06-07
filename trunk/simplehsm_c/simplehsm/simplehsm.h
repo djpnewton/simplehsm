@@ -28,7 +28,7 @@ enum
   SIG_ENTRY = 2,
   SIG_EXIT  = 3,
   SIG_USER  = 4,
-} SimpleHsmSignals;
+} simplehsm_signals_t;
 
 //
 // State machine definitions
@@ -41,18 +41,18 @@ typedef stfunc (*ptrstfunc)(int, void*);
 
 typedef struct
 {
-  stfunc curState;
-} SimpleHsm;
+  stfunc current_state;
+} simplehsm_t;
 
 //
 // State utility function definitions
 //
 
-void InitialState(SimpleHsm* hsm, stfunc newState);
-void TransitionState(SimpleHsm* hsm, stfunc newState);
-void InitTransitionState(SimpleHsm* hsm, stfunc newState);
-void SignalCurrentState(SimpleHsm* hsm, int signal, void* param);
-BOOL IsInState(SimpleHsm* hsm, stfunc state);
+void simplehsm_initial_state(simplehsm_t* hsm, stfunc new_state);
+void simplehsm_transition_state(simplehsm_t* hsm, stfunc new_state);
+void simplehsm_init_transition_state(simplehsm_t* hsm, stfunc new_state);
+void simplehsm_signal_current_state(simplehsm_t* hsm, int signal, void* param);
+BOOL simplehsm_is_in_state(simplehsm_t* hsm, stfunc state);
 
 //---------------------------------------------------------------------------
 #endif  //simplehsmH
