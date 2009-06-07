@@ -10,103 +10,103 @@
 // State utility function implementations
 //
 
-void InitialState(SimpleHsm* hsm, stfunc newState)
+void simplehsm_initial_state(simplehsm_t* hsm, stfunc new_state)
 {
-  InitTransitionState(hsm, newState);
+  simplehsm_init_transition_state(hsm, new_state);
 }
 
-BOOL IsParent(SimpleHsm* hsm, stfunc parentState, stfunc childState)
+BOOL _is_parent(simplehsm_t* hsm, stfunc parent_state, stfunc child_state)
 {
   do 
   {
-    childState = (stfunc)childState(SIG_NULL, NULL);
-    if (childState == parentState)
+    child_state = (stfunc)child_state(SIG_NULL, NULL);
+    if (child_state == parent_state)
       return TRUE;
   }
-  while (childState != NULL);
+  while (child_state != NULL);
   return FALSE;
 }
 
-void TransitionState(SimpleHsm* hsm, stfunc newState)
+void simplehsm_transition_state(simplehsm_t* hsm, stfunc new_state)
 {
   // exit signal to current state
-  if (hsm->curState != NULL)
+  if (hsm->current_state != NULL)
   {
-    stfunc parentState;
-    hsm->curState(SIG_EXIT, NULL);
-    parentState = (stfunc)hsm->curState(SIG_NULL, NULL);
-    while (!IsParent(hsm, parentState, newState))
+    stfunc parent_state;
+    hsm->current_state(SIG_EXIT, NULL);
+    parent_state = (stfunc)hsm->current_state(SIG_NULL, NULL);
+    while (!_is_parent(hsm, parent_state, new_state))
     {
-      parentState(SIG_EXIT, NULL);
-      parentState = (stfunc)parentState(SIG_NULL, NULL);
+      parent_state(SIG_EXIT, NULL);
+      parent_state = (stfunc)parent_state(SIG_NULL, NULL);
     }
     // set current state to parent state
-    hsm->curState = parentState;
+    hsm->current_state = parent_state;
   }
   else
-    printf("TransitionState: ERROR - current state is invalid!");
+    printf("simplehsm_transition_state: ERROR - current state is invalid!");
   
   // entry signal to new state
-  while (hsm->curState != newState)
+  while (hsm->current_state != new_state)
   {
-    stfunc parentState = newState;
-    stfunc lastChild = newState;
+    stfunc parent_state = new_state;
+    stfunc lastChild = new_state;
     while (TRUE)
     {
-      parentState = parentState(SIG_NULL, NULL);
-      if (parentState == hsm->curState)
+      parent_state = parent_state(SIG_NULL, NULL);
+      if (parent_state == hsm->current_state)
       {
         lastChild(SIG_ENTRY, NULL);
         // set current state to last child state
-        hsm->curState = lastChild;
+        hsm->current_state = lastChild;
         break;
       }
-      lastChild = parentState;
+      lastChild = parent_state;
     }
   }
 
   // init signal to new state
-  newState(SIG_INIT, NULL);
+  new_state(SIG_INIT, NULL);
 }
 
-void InitTransitionState(SimpleHsm* hsm, stfunc newState)
+void simplehsm_init_transition_state(simplehsm_t* hsm, stfunc new_state)
 {
   // set new state
-  hsm->curState = newState;
-  if (hsm->curState != NULL)
+  hsm->current_state = new_state;
+  if (hsm->current_state != NULL)
   {
     // entry signal to current state
-    hsm->curState(SIG_ENTRY, NULL);
+    hsm->current_state(SIG_ENTRY, NULL);
     // init signal to current state
-    hsm->curState(SIG_INIT, NULL);
+    hsm->current_state(SIG_INIT, NULL);
   }
   else
-    printf("InitTransitionState: ERROR - current state is invalid!\n");
+    printf("simplehsm_init_transition_state: ERROR - current state is invalid!\n");
 }
 
-void SignalCurrentState(SimpleHsm* hsm, int signal, void* param)
+void simplehsm_signal_current_state(simplehsm_t* hsm, int signal, void* param)
 {
-  if (hsm->curState != NULL)
+  if (hsm->current_state != NULL)
   {
-    stfunc parentState = hsm->curState;
+    stfunc parent_state = hsm->current_state;
     do
-      parentState = (stfunc)parentState(signal, param);
-    while (parentState != NULL);
+      parent_state = (stfunc)parent_state(signal, param);
+    while (parent_state != NULL);
   }
   else
-    printf("SignalCurrentState: ERROR - current state is invalid!\n");
+    printf("simplehsm_signal_current_state: ERROR - current state is invalid!\n");
 }
 
-BOOL IsInState(SimpleHsm* hsm, stfunc state)
+BOOL simplehsm_is_in_state(simplehsm_t* hsm, stfunc state)
 {
-  stfunc parentState = hsm->curState;
+  stfunc parent_state = hsm->current_state;
   do
   {
-    if (state == parentState)
+    if (state == parent_state)
       return TRUE;
-    parentState = (stfunc)parentState(SIG_NULL, NULL);
+    parent_state = (stfunc)parent_state(SIG_NULL, NULL);
   }
-  while (parentState != NULL);
+  while (parent_state != NULL);
   return FALSE;
 }
 

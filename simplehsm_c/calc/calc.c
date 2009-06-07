@@ -11,7 +11,7 @@ int btnClick(Ihandle* self)
   char* c = IupGetAttribute(self, "TITLE");
 
   if (strcmp(c, "0") == 0)
-    SignalCalcHsm(SIG_DIGIT0, NULL);
+    calchsm_signal(SIG_DIGIT0, NULL);
   else if (strcmp(c, "1") == 0 ||
            strcmp(c, "2") == 0 ||
            strcmp(c, "3") == 0 ||
@@ -21,30 +21,30 @@ int btnClick(Ihandle* self)
            strcmp(c, "7") == 0 ||
            strcmp(c, "8") == 0 ||
            strcmp(c, "9") == 0)
-    SignalCalcHsm(SIG_DIGIT1_9, c);
+    calchsm_signal(SIG_DIGIT1_9, c);
   else if (strcmp(c, ".") == 0)
-    SignalCalcHsm(SIG_POINT, NULL);
+    calchsm_signal(SIG_POINT, NULL);
   else if (strcmp(c, "+") == 0 ||
            strcmp(c, "-") == 0 ||
            strcmp(c, "*") == 0 ||
            strcmp(c, "/") == 0)
-    SignalCalcHsm(SIG_OPERATOR, c);
+    calchsm_signal(SIG_OPERATOR, c);
   else if (strcmp(c, "C") == 0)
-    SignalCalcHsm(SIG_CLEAR, NULL);
+    calchsm_signal(SIG_CLEAR, NULL);
   else if (strcmp(c, "CE") == 0)
-    SignalCalcHsm(SIG_CLEARENTRY, NULL);
+    calchsm_signal(SIG_CLEARENTRY, NULL);
   else if (strcmp(c, "=") == 0)
-    SignalCalcHsm(SIG_EQUALS, NULL);
+    calchsm_signal(SIG_EQUALS, NULL);
 
   return EXIT_SUCCESS;
 }
 
-void AttachButtonEvents(Ihandle* ih)
+void attach_button_events(Ihandle* ih)
 {
   int i;
   // recurse through all controls
   for (i = 0; i < IupGetChildCount(ih); i++)
-    AttachButtonEvents(IupGetChild(ih, i));
+    attach_button_events(IupGetChild(ih, i));
   // if control is a button attach the event
   if (strcmp(IupGetClassName(ih), "button") == 0)
     IupSetCallback(ih, "ACTION", btnClick);
@@ -57,11 +57,11 @@ int main(int argc, char **argv)
   // load calc user interface file
   IupLoad("calc.led");
   // setup button handlers 
-  AttachButtonEvents(IupGetHandle("main"));
+  attach_button_events(IupGetHandle("main"));
   // show main window
   IupShow(IupGetHandle("main"));
   // Initialse calc state machine
-  InitCalcHsm(IupGetHandle("textBox"));
+  calchsm_init(IupGetHandle("textBox"));
   // start mainloop
   IupMainLoop();
   // close iup library

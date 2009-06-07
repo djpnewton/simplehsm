@@ -16,7 +16,7 @@ enum
 // Oven state machine object
 //
 
-SimpleHsm hsm = {NULL};
+simplehsm_t hsm = {NULL};
 
 
 //
@@ -41,7 +41,7 @@ stnext oven(int signal, void* param)
       printf("oven: entering state\n");
       return stnone;
     case SIG_INIT:
-      InitTransitionState(&hsm, heating);
+        simplehsm_init_transition_state(&hsm, heating);
       return stnone;
     case SIG_EXIT:
       printf("oven: exiting state\n");
@@ -58,14 +58,14 @@ stnext heating(int signal, void* param)
       printf("  heating: entering state\n");
       return stnone;
     case SIG_INIT:
-      InitTransitionState(&hsm, toasting);
+      simplehsm_init_transition_state(&hsm, toasting);
       return stnone;
     case SIG_EXIT:
       printf("  heating: exiting state\n");
       return stnone;
     case SIG_OPEN_DOOR:
       printf("  heating: OPEN_DOOR signal!\n");
-      TransitionState(&hsm, doorOpen);
+      simplehsm_transition_state(&hsm, doorOpen);
       return stnone;
   }
   return (stnext)oven;
@@ -119,17 +119,21 @@ stnext doorOpen(int signal, void* param)
   return (stnext)oven;
 }
 
-void ShowStatus(SimpleHsm* hsm)
+void show_status(simplehsm_t* hsm)
 {
   printf("\nChecking States:\n");
   printf("  in oven state: %d\n  in heating state: %d\n  in toasting state: %d\n  in baking state: %d\n  in doorOpen state: %d\n\n",
-         IsInState(hsm, oven), IsInState(hsm, heating), IsInState(hsm, toasting), IsInState(hsm, baking), IsInState(hsm, doorOpen));
+         simplehsm_is_in_state(hsm, oven),
+         simplehsm_is_in_state(hsm, heating),
+         simplehsm_is_in_state(hsm, toasting),
+         simplehsm_is_in_state(hsm, baking),
+         simplehsm_is_in_state(hsm, doorOpen));
 }
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-  InitialState(&hsm, oven);
-  SignalCurrentState(&hsm, SIG_OPEN_DOOR, NULL);
-  ShowStatus(&hsm);
+  simplehsm_initial_state(&hsm, oven);
+  simplehsm_signal_current_state(&hsm, SIG_OPEN_DOOR, NULL);
+  show_status(&hsm);
   return 0;
 }
