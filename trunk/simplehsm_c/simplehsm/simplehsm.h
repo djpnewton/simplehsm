@@ -34,6 +34,7 @@ enum
 // State machine definitions
 //
 
+// TODO - make these definitions better? (simplehsm_state_t etc?)
 #define stnone NULL;
 typedef void* stnext;
 typedef stnext (*stfunc)(int, void*);
