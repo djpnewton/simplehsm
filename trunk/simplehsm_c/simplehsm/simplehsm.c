@@ -1,5 +1,35 @@
-// simplehsm.c : Defines the entry point for the console application.
-//
+/**
+ * @file
+ * @author  Daniel Newton <djpnewton@gmail.com>
+ * @version 1.0
+ *
+ * @section LICENSE
+ *
+ * Copyright (c) 2009 Daniel Newton
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @section DESCRIPTION
+ *
+ * The simplehsm C implementation
+ */
+
 
 #include <stdio.h>
 #include <tchar.h>
@@ -10,11 +40,27 @@
 // State utility function implementations
 //
 
+/**
+* Initialise a simplehsm state machine.
+* 
+* @param hsm The state machine to initialise
+* @param new_state The initial or starting state
+* 
+*/
 void simplehsm_initial_state(simplehsm_t* hsm, stfunc new_state)
 {
   simplehsm_init_transition_state(hsm, new_state);
 }
 
+/**
+* Check is one state is the parent of another.
+* 
+* @param hsm The state machine to check
+* @param parent_state The parent state to check
+* @param child_state The child state to check
+* @return True if the parent_state parameter is a parent to the child_state parameter
+* 
+*/
 BOOL _is_parent(simplehsm_t* hsm, stfunc parent_state, stfunc child_state)
 {
   do 
@@ -27,6 +73,13 @@ BOOL _is_parent(simplehsm_t* hsm, stfunc parent_state, stfunc child_state)
   return FALSE;
 }
 
+/**
+* Initiate a transition to a new state.
+* 
+* @param hsm The state machine to transition
+* @param new_state The state to transition to
+* 
+*/
 void simplehsm_transition_state(simplehsm_t* hsm, stfunc new_state)
 {
   // exit signal to current state
@@ -69,6 +122,13 @@ void simplehsm_transition_state(simplehsm_t* hsm, stfunc new_state)
   new_state(SIG_INIT, NULL);
 }
 
+/**
+* Initiate an initial transition to a new state (this function should only be used from a #SIG_INIT state event).
+* 
+* @param hsm The state machine to transition
+* @param new_state The state to transition to
+* 
+*/
 void simplehsm_init_transition_state(simplehsm_t* hsm, stfunc new_state)
 {
   // set new state
@@ -84,6 +144,14 @@ void simplehsm_init_transition_state(simplehsm_t* hsm, stfunc new_state)
     printf("simplehsm_init_transition_state: ERROR - current state is invalid!\n");
 }
 
+/**
+* Send a signal to the state machine.
+* 
+* @param hsm The state machine to signal
+* @param signal The signal flag
+* @param param An optional parameter to accompany the signal
+* 
+*/
 void simplehsm_signal_current_state(simplehsm_t* hsm, int signal, void* param)
 {
   if (hsm->current_state != NULL)
@@ -97,6 +165,14 @@ void simplehsm_signal_current_state(simplehsm_t* hsm, int signal, void* param)
     printf("simplehsm_signal_current_state: ERROR - current state is invalid!\n");
 }
 
+/**
+* Check if a state machine is currently in a certain state.
+* 
+* @param hsm The state machine to check
+* @param state The state to check
+* @return True if the state machine is currently in the specified state
+* 
+*/
 BOOL simplehsm_is_in_state(simplehsm_t* hsm, stfunc state)
 {
   stfunc parent_state = hsm->current_state;
@@ -109,8 +185,3 @@ BOOL simplehsm_is_in_state(simplehsm_t* hsm, stfunc state)
   while (parent_state != NULL);
   return FALSE;
 }
-
-
-
-
-
