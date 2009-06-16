@@ -1,43 +1,90 @@
+##
+# @file
+# @author  Daniel Newton <djpnewton@gmail.com>
+# @version 1.0
+#
+# @section LICENSE
+#
+# Copyright (c) 2009 Daniel Newton
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+# @section DESCRIPTION
+#
+# The simplehsm C implementation
+
 #
 # Generic State machine signals
 #
 
+## Null signal, all state functions should ignore this signal and return their parent state (or None if the top level state) 
 SIG_NULL  = 0
+## Initialisation signal, a state function should transition to a default substate (SimpleHsm::InitTransitionState()) if it has substates */
 SIG_INIT  = 1
+## Entry signal, a state function should perform its entry actions (if any)
 SIG_ENTRY = 2
+## Exit signal, a state function should perform its exit actions (if any)
 SIG_EXIT  = 3
+## User signals should start from this index
 SIG_USER  = 4
 
-#
-# State Event class
-#
-
+## State Event class
+# 
+# The state event carries the details about the event (what signal caused the event) and can be subclassed to provide extra parameters
 class StateEvent:
 
+    ## The signal associated with this event
     sig = None
 
+    ## StateEvent constructor
+    #
+    # @param sig The signal associated with this event
     def __init__(self, sig):
         self.sig = sig
 
-#
-# SimpleHsm class
-#
-
+## SimpleHsm class
+# 
+# The basic state machine implementation. This class should be subclassed to create a state machine.
 class SimpleHsm:
 
-    #
-    # Current state variable
-    #
-
+    ## Current state variable
     __cur_state = None
 
     #
     # State utility function implementations
     #
 
+    ##
+    # Initialise a simplehsm state machine.
+    # 
+    # @param new_state The initial or starting state
+    # 
     def InitialState(self, new_state):
         self.InitTransitionState(new_state)
 
+    ##
+    # Check is one state is the parent of another.
+    # 
+    # @param parent_state The parent state to check
+    # @param child_state The child state to check
+    # @return True if the parent_state parameter is a parent to the child_state parameter
+    # 
     def __IsParent(self, parent_state, child_state):
         while True:
             child_state = child_state(StateEvent(SIG_NULL))
@@ -46,6 +93,11 @@ class SimpleHsm:
             if not child_state: break
         return False
 
+    ##
+    # Initiate a transition to a new state.
+    # 
+    # @param new_state The state to transition to
+    # 
     def TransitionState(self, new_state):
         # exit signal to current state
         if (self.__cur_state):
@@ -75,6 +127,11 @@ class SimpleHsm:
         # init signal to new state
         new_state(StateEvent(SIG_INIT))
 
+    ##
+    # Initiate an initial transition to a new state (this function should only be used from a #SIG_INIT state event).
+    # 
+    # @param new_state The state to transition to
+    # 
     def InitTransitionState(self, new_state):
         # set new state
         self.__cur_state = new_state
@@ -86,6 +143,11 @@ class SimpleHsm:
         else:
             print "InitTransitionState: ERROR - current state is invalid!\n"
 
+    ##
+    # Send a signal to the state machine.
+    # 
+    # @param state_event The event to send to the state machine
+    # 
     def SignalCurrentState(self, state_event):
         if (self.__cur_state != None):
             parent_state = self.__cur_state
@@ -95,6 +157,12 @@ class SimpleHsm:
         else:
             print "SignalCurrentState: ERROR - current state is invalid!\n"
 
+    ##
+    # Check if a state machine is currently in a certain state.
+    # 
+    # @param state The state to check
+    # @return True if the state machine is currently in the specified state
+    # 
     def IsInState(self, state):
         parent_state = self.__cur_state
         while (True):
