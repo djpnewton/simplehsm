@@ -35,7 +35,7 @@
 
 ## Null signal, all state functions should ignore this signal and return their parent state (or None if the top level state) 
 SIG_NULL  = 0
-## Initialisation signal, a state function should transition to a default substate (SimpleHsm::InitTransitionState()) if it has substates */
+## Initialisation signal, a state function should transition to a default substate (SimpleHsm::InitTransitionState()) if it has substates
 SIG_INIT  = 1
 ## Entry signal, a state function should perform its entry actions (if any)
 SIG_ENTRY = 2
