@@ -49,12 +49,8 @@ typedef int BOOL;
 #define TRUE 1
 #endif
 
-//
-// Generic State machine signals
-//
-
 /** \enum simplehsm_signals_t
- * The base state signals
+ * The base state machine signals
  */
 enum simplehsm_signals_t
 {

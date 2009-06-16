@@ -30,7 +30,7 @@
 # The simplehsm C implementation
 
 #
-# Generic State machine signals
+# The base state machine signals
 #
 
 ## Null signal, all state functions should ignore this signal and return their parent state (or None if the top level state) 
@@ -44,7 +44,7 @@ SIG_EXIT  = 3
 ## User signals should start from this index
 SIG_USER  = 4
 
-## State Event class
+## StateEvent class
 # 
 # The state event carries the details about the event (what signal caused the event) and can be subclassed to provide extra parameters
 class StateEvent:
