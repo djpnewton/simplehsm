@@ -59,7 +59,7 @@ class CalcHsm(SimpleHsm):
         self.entry.insert(END, "-0")
         self.negative = True
 
-    def Insert(self, c):
+    def append(self, c):
         if self.clearOnNext:
             self.entry.delete(0, END)
             if self.negative:
@@ -67,7 +67,7 @@ class CalcHsm(SimpleHsm):
             self.clearOnNext = False
         self.entry.insert(END, c)
 
-    def Update(self, operand1, operand2, operator_):
+    def calc(self, operand1, operand2, operator_):
         if (operator_ == '+'):
             return operand1 + operand2
         if (operator_ == '-'):
@@ -104,16 +104,16 @@ class CalcHsm(SimpleHsm):
             self.TransitionState(self.opEntered)
             return None
         elif state_event.sig == SIG_DIGIT_0:
-            self.Insert('0')
+            self.append('0')
             self.clearOnNext = True
             self.TransitionState(self.zero1)
             return None
         elif state_event.sig == SIG_DIGIT_1_9:
-            self.Insert(state_event.key)
+            self.append(state_event.key)
             self.TransitionState(self.int1)
             return None
         elif state_event.sig == SIG_POINT:
-            self.Insert('.')
+            self.append('.')
             self.TransitionState(self.frac1)
             return None
         return self.on
@@ -140,11 +140,11 @@ class CalcHsm(SimpleHsm):
             self.TransitionState(self.zero1)
             return None
         elif state_event.sig == SIG_DIGIT_1_9:
-            self.Insert(state_event.key)
+            self.append(state_event.key)
             self.TransitionState(self.int1)
             return None
         elif state_event.sig == SIG_POINT:
-            self.Insert('.')
+            self.append('.')
             self.TransitionState(self.frac1)
             return None
         elif state_event.sig == SIG_CLEAR_ENTRY:
@@ -167,34 +167,34 @@ class CalcHsm(SimpleHsm):
         if state_event.sig == SIG_DIGIT_0:
             return None
         elif state_event.sig == SIG_DIGIT_1_9:
-            self.Insert(state_event.key)
+            self.append(state_event.key)
             self.TransitionState(self.int1)
             return None
         elif state_event.sig == SIG_POINT:
-            self.Insert('.')
+            self.append('.')
             self.TransitionState(self.frac1)
             return None
         return self.operand1
 
     def int1(self, state_event):
         if state_event.sig == SIG_DIGIT_0:
-            self.Insert('0')
+            self.append('0')
             return None
         elif state_event.sig == SIG_DIGIT_1_9:
-            self.Insert(state_event.key)
+            self.append(state_event.key)
             return None
         elif state_event.sig == SIG_POINT:
-            self.Insert('.')
+            self.append('.')
             self.TransitionState(self.frac1)
             return None
         return self.operand1
 
     def frac1(self, state_event):
         if state_event.sig == SIG_DIGIT_0:
-            self.Insert('0')
+            self.append('0')
             return None
         elif state_event.sig == SIG_DIGIT_1_9:
-            self.Insert(state_event.key)
+            self.append(state_event.key)
             return None
         return self.operand1
 
@@ -211,16 +211,16 @@ class CalcHsm(SimpleHsm):
                 self.TransitionState(self.negated2)
                 return None
         elif state_event.sig == SIG_DIGIT_0:
-            self.Insert('0')
+            self.append('0')
             self.clearOnNext = True
             self.TransitionState(self.zero2)
             return None
         elif state_event.sig == SIG_DIGIT_1_9:
-            self.Insert(state_event.key)
+            self.append(state_event.key)
             self.TransitionState(self.int2)
             return None
         elif state_event.sig == SIG_POINT:
-            self.Insert('.')
+            self.append('.')
             self.TransitionState(self.frac2)
             return None
         return self.on
@@ -233,11 +233,11 @@ class CalcHsm(SimpleHsm):
             self.TransitionState(self.zero2)
             return None
         elif state_event.sig == SIG_DIGIT_1_9:
-            self.Insert(state_event.key)
+            self.append(state_event.key)
             self.TransitionState(self.int2)
             return None
         elif state_event.sig == SIG_POINT:
-            self.Insert('.')
+            self.append('.')
             self.TransitionState(self.frac2)
             return None
         elif state_event.sig == SIG_CLEAR_ENTRY:
@@ -253,7 +253,7 @@ class CalcHsm(SimpleHsm):
             return None
         elif state_event.sig == SIG_OPERATOR:
             try:
-                self._operand1 = self.Update(self._operand1, float(self.entry.get()), self._operator)
+                self._operand1 = self.calc(self._operand1, float(self.entry.get()), self._operator)
                 self._operator = state_event.key
                 self.entry.delete(0, END)
                 val = str(self._operand1)
@@ -268,7 +268,7 @@ class CalcHsm(SimpleHsm):
             return None
         elif state_event.sig == SIG_EQUALS:
             try:
-                self._operand1 = self.Update(self._operand1, float(self.entry.get()), self._operator)
+                self._operand1 = self.calc(self._operand1, float(self.entry.get()), self._operator)
                 self.entry.delete(0, END)
                 val = str(self._operand1)
                 if val[-2:] == ".0":
@@ -286,33 +286,33 @@ class CalcHsm(SimpleHsm):
         if state_event.sig == SIG_DIGIT_0:
             return None
         elif state_event.sig == SIG_DIGIT_1_9:
-            self.Insert(state_event.key)
+            self.append(state_event.key)
             self.TransitionState(self.int2)
             return None
         elif state_event.sig == SIG_POINT:
-            self.Insert('.')
+            self.append('.')
             self.TransitionState(self.frac2)
             return None
         return self.operand2
 
     def int2(self, state_event):
         if state_event.sig == SIG_DIGIT_0:
-            self.Insert('0')
+            self.append('0')
             return None
         elif state_event.sig == SIG_DIGIT_1_9:
-            self.Insert(state_event.key)
+            self.append(state_event.key)
             return None
         elif state_event.sig == SIG_POINT:
-            self.Insert('.')
+            self.append('.')
             self.TransitionState(self.frac2)
             return None
         return self.operand2
 
     def frac2(self, state_event):
         if state_event.sig == SIG_DIGIT_0:
-            self.Insert('0')
+            self.append('0')
             return None
         elif state_event.sig == SIG_DIGIT_1_9:
-            self.Insert(state_event.key)
+            self.append(state_event.key)
             return None
         return self.operand2

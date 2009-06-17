@@ -73,7 +73,7 @@ namespace Calc
             negative = true;
         }
 
-        void Insert(char c)
+        void Append(char c)
         {
             if (clearOnNext)
             {
@@ -85,7 +85,7 @@ namespace Calc
             textBox.Text += c;
         }
 
-        double Update(double operand1, double operand2, char operator_)
+        double Calc(double operand1, double operand2, char operator_)
         {
             switch (operator_)
             {
@@ -135,16 +135,16 @@ namespace Calc
                     TransitionState(opEntered);
                     return null;
                 case (Signal)CalcSignal.Digit0:
-                    Insert('0');
+                    Append('0');
                     clearOnNext = true;
                     TransitionState(zero1);
                     return null;
                 case (Signal)CalcSignal.Digit1_9:
-                    Insert(((CalcEvent)e).Key);
+                    Append(((CalcEvent)e).Key);
                     TransitionState(int1);
                     return null;
                 case (Signal)CalcSignal.Point:
-                    Insert('.');
+                    Append('.');
                     TransitionState(frac1);
                     return null;
             }
@@ -186,11 +186,11 @@ namespace Calc
                     TransitionState(zero1);
                     return null;
                 case (Signal)CalcSignal.Digit1_9:
-                    Insert(((CalcEvent)e).Key);
+                    Append(((CalcEvent)e).Key);
                     TransitionState(int1);
                     return null;
                 case (Signal)CalcSignal.Point:
-                    Insert('.');
+                    Append('.');
                     TransitionState(frac1);
                     return null;
                 case (Signal)CalcSignal.ClearEntry:
@@ -223,11 +223,11 @@ namespace Calc
                 case (Signal)CalcSignal.Digit0:
                     return null;
                 case (Signal)CalcSignal.Digit1_9:
-                    Insert(((CalcEvent)e).Key);
+                    Append(((CalcEvent)e).Key);
                     TransitionState(int1);
                     return null;
                 case (Signal)CalcSignal.Point:
-                    Insert('.');
+                    Append('.');
                     TransitionState(frac1);
                     return null;
             }
@@ -239,13 +239,13 @@ namespace Calc
             switch (e.Signal)
             {
                 case (Signal)CalcSignal.Digit0:
-                    Insert('0');
+                    Append('0');
                     return null;
                 case (Signal)CalcSignal.Digit1_9:
-                    Insert(((CalcEvent)e).Key);
+                    Append(((CalcEvent)e).Key);
                     return null;
                 case (Signal)CalcSignal.Point:
-                    Insert('.');
+                    Append('.');
                     TransitionState(frac1);
                     return null;
             }
@@ -257,10 +257,10 @@ namespace Calc
             switch (e.Signal)
             {
                 case (Signal)CalcSignal.Digit0:
-                    Insert('0');
+                    Append('0');
                     return null;
                 case (Signal)CalcSignal.Digit1_9:
-                    Insert(((CalcEvent)e).Key);
+                    Append(((CalcEvent)e).Key);
                     return null;
             }
             return operand1;
@@ -287,16 +287,16 @@ namespace Calc
                     }
                     break;
                 case (Signal)CalcSignal.Digit0:
-                    Insert('0');
+                    Append('0');
                     clearOnNext = true;
                     TransitionState(zero2);
                     return null;
                 case (Signal)CalcSignal.Digit1_9:
-                    Insert(((CalcEvent)e).Key);
+                    Append(((CalcEvent)e).Key);
                     TransitionState(int2);
                     return null;
                 case (Signal)CalcSignal.Point:
-                    Insert('.');
+                    Append('.');
                     TransitionState(frac2);
                     return null;
             }
@@ -314,11 +314,11 @@ namespace Calc
                     TransitionState(zero2);
                     return null;
                 case (Signal)CalcSignal.Digit1_9:
-                    Insert(((CalcEvent)e).Key);
+                    Append(((CalcEvent)e).Key);
                     TransitionState(int2);
                     return null;
                 case (Signal)CalcSignal.Point:
-                    Insert('.');
+                    Append('.');
                     TransitionState(frac2);
                     return null;
                 case (Signal)CalcSignal.ClearEntry:
@@ -340,7 +340,7 @@ namespace Calc
                 case (Signal)CalcSignal.Operator:
                     try
                     {
-                        _operand1 = Update(_operand1, Convert.ToDouble(textBox.Text), _operator);
+                        _operand1 = Calc(_operand1, Convert.ToDouble(textBox.Text), _operator);
                         _operator = ((CalcEvent)e).Key;
                         textBox.Text = _operand1.ToString();
                         TransitionState(opEntered);
@@ -354,7 +354,7 @@ namespace Calc
                 case (Signal)CalcSignal.Equals:
                     try
                     {
-                        _operand1 = Update(_operand1, Convert.ToDouble(textBox.Text), _operator);
+                        _operand1 = Calc(_operand1, Convert.ToDouble(textBox.Text), _operator);
                         textBox.Text = _operand1.ToString();
                         TransitionState(result);
                     }
@@ -375,11 +375,11 @@ namespace Calc
                 case (Signal)CalcSignal.Digit0:
                     return null;
                 case (Signal)CalcSignal.Digit1_9:
-                    Insert(((CalcEvent)e).Key);
+                    Append(((CalcEvent)e).Key);
                     TransitionState(int2);
                     return null;
                 case (Signal)CalcSignal.Point:
-                    Insert('.');
+                    Append('.');
                     TransitionState(frac2);
                     return null;
             }
@@ -391,13 +391,13 @@ namespace Calc
             switch (e.Signal)
             {
                 case (Signal)CalcSignal.Digit0:
-                    Insert('0');
+                    Append('0');
                     return null;
                 case (Signal)CalcSignal.Digit1_9:
-                    Insert(((CalcEvent)e).Key);
+                    Append(((CalcEvent)e).Key);
                     return null;
                 case (Signal)CalcSignal.Point:
-                    Insert('.');
+                    Append('.');
                     TransitionState(frac2);
                     return null;
             }
@@ -409,10 +409,10 @@ namespace Calc
             switch (e.Signal)
             {
                 case (Signal)CalcSignal.Digit0:
-                    Insert('0');
+                    Append('0');
                     return null;
                 case (Signal)CalcSignal.Digit1_9:
-                    Insert(((CalcEvent)e).Key);
+                    Append(((CalcEvent)e).Key);
                     return null;
             }
             return operand2;
