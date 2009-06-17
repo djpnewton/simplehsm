@@ -1,3 +1,35 @@
+/**
+ * @file
+ * @author  Daniel Newton <djpnewton@gmail.com>
+ * @version 1.0
+ *
+ * @section LICENSE
+ *
+ * Copyright (c) 2009 Daniel Newton
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @section DESCRIPTION
+ *
+ * The calc state machine example program
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <tchar.h>
@@ -6,6 +38,12 @@
 
 #include "calcHsm.h"
 
+/**
+* Handle any button clicks and send the relevant signal to the calc state machine
+* 
+* @param self The button that was clicked
+* 
+*/
 int btnClick(Ihandle* self)
 {
   char* c = IupGetAttribute(self, "TITLE");
@@ -39,6 +77,12 @@ int btnClick(Ihandle* self)
   return EXIT_SUCCESS;
 }
 
+/**
+* Attach button click event handlers to all the child buttons of a control
+* 
+* @param ih The parent control
+* 
+*/
 void attach_button_events(Ihandle* ih)
 {
   int i;
@@ -50,6 +94,9 @@ void attach_button_events(Ihandle* ih)
     IupSetCallback(ih, "ACTION", btnClick);
 }
 
+/**
+* The main function of this program
+*/
 int main(int argc, char **argv)
 {
   // initialise iup library

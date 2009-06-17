@@ -1,12 +1,43 @@
+/**
+ * @file
+ * @author  Daniel Newton <djpnewton@gmail.com>
+ * @version 1.0
+ *
+ * @section LICENSE
+ *
+ * Copyright (c) 2009 Daniel Newton
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @section DESCRIPTION
+ *
+ * The calc state machine
+ */
+
 #include "calcHsm.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 
-//
-// Calc state machine object
-//
-
+/**
+ * The Calc state machine object
+ */
 simplehsm_t hsm = {NULL};
 
 //
@@ -34,21 +65,48 @@ stnext on(int signal, void* param);
 // State variables
 //
 
+/**
+ * The IUP textbox widget
+ */
 Ihandle* textbox = NULL;
-BOOL clear_on_next, negative;
+/**
+ * If this flag is set we clear the textbox and replace text with new character on the next signal
+ */
+BOOL clear_on_next;
+/**
+ * If this flag is set the current operand will be negative
+ */
+BOOL negative;
+/**
+ * The first operand
+ */
 double _operand1;
+/**
+ * The current operator
+ */
 char _operator;
 
 //
 // public functions
 //
 
+/**
+ * Initialize the calc state machine
+ *
+ * @param tb The IUP textbox widget that the calc state machine will use
+ */
 void calchsm_init(Ihandle* tb)
 {
     textbox = tb;
     simplehsm_initial_state(&hsm, on);
 }
 
+/**
+ * Send a signal to the calc state machine
+ *
+ * @param signal The signal to send
+ * @param param An optional parameter
+ */
 void calchsm_signal(int signal, void* param)
 {
     simplehsm_signal_current_state(&hsm, signal, param);
@@ -58,20 +116,33 @@ void calchsm_signal(int signal, void* param)
 // Helper functions
 //
 
+/**
+ * Clear the textbox input and replace with a '0' string also reset the #negative variable
+ */
 void zero(void)
 {
     IupSetAttribute(textbox, "VALUE", "0");
     negative = FALSE;
 }
 
+/**
+ * Clear the textbox input and replace with a '-0' string also set the #negative variable
+ */
 void negate(void)
 {
     IupSetAttribute(textbox, "VALUE", "-0");
     negative = TRUE;
 }
 
+/**
+ * Append a character to the textbox input, if the #clear_on_next variable is set then 
+ * clear the textbox first 
+ *
+ * @param c The character to insert
+ */
 void insert(char c)
 {
+    //! @todo Change this function name to append?
     if (clear_on_next)
     {
         IupSetAttribute(textbox, "VALUE", "");
@@ -82,8 +153,17 @@ void insert(char c)
     IupSetAttribute(textbox, "APPEND", &c);
 }
 
+/**
+ * Calculate the result of a function
+ *
+ * @param operand1 The first operand
+ * @param operand2 The second operand
+ * @param operator_ The operator (+, -, *, /) to use
+ * @return The result of the function
+ */
 double update(double operand1, double operand2, char operator_)
 {
+    //! @todo Change this function name to calc?
     switch (operator_)
     {
         case '+':
@@ -102,6 +182,13 @@ double update(double operand1, double operand2, char operator_)
 // Calc state functions
 //
 
+/**
+ * The 'on' state functon
+ *
+ * @param signal The signal to handle
+ * @param param The accompaning parameter
+ * @return Always NULL as this is the top level state function
+ */
 stnext on(int signal, void* param)
 {
     switch (signal)
@@ -116,6 +203,13 @@ stnext on(int signal, void* param)
     return NULL;
 }
 
+/**
+ * The 'ready' state functon
+ *
+ * @param signal The signal to handle
+ * @param param The accompaning parameter
+ * @return NULL if the signal is handled otherwise on() (the parent state)
+ */
 stnext ready(int signal, void* param)
 {
     switch (signal)
@@ -148,11 +242,25 @@ stnext ready(int signal, void* param)
     return on;
 }
 
+/**
+ * The 'result' state functon
+ *
+ * @param signal The signal to handle
+ * @param param The accompaning parameter
+ * @return ready() (the parent state)
+ */
 stnext result(int signal, void* param)
 {
     return ready;
 }
 
+/**
+ * The 'begin' state functon
+ *
+ * @param signal The signal to handle
+ * @param param The accompaning parameter
+ * @return NULL if the signal is handled otherwise ready() (the parent state)
+ */
 stnext begin(int signal, void* param)
 {
     switch (signal)
@@ -172,6 +280,13 @@ stnext begin(int signal, void* param)
       return ready;
 }
 
+/**
+ * The 'negated1' state functon
+ *
+ * @param signal The signal to handle
+ * @param param The accompaning parameter
+ * @return NULL if the signal is handled otherwise on() (the parent state)
+ */
 stnext negated1(int signal, void* param)
 {
     switch (signal)
@@ -197,6 +312,13 @@ stnext negated1(int signal, void* param)
     return on;
 }
 
+/**
+ * The 'operand1' state functon
+ *
+ * @param signal The signal to handle
+ * @param param The accompaning parameter
+ * @return NULL if the signal is handled otherwise on() (the parent state)
+ */
 stnext operand1(int signal, void* param)
 {
     switch (signal)
@@ -213,6 +335,13 @@ stnext operand1(int signal, void* param)
     return on;
 }
 
+/**
+ * The 'zero1' state functon
+ *
+ * @param signal The signal to handle
+ * @param param The accompaning parameter
+ * @return NULL if the signal is handled otherwise operand1() (the parent state)
+ */
 stnext zero1(int signal, void* param)
 {
     switch (signal)
@@ -231,6 +360,13 @@ stnext zero1(int signal, void* param)
     return operand1;
 }
 
+/**
+ * The 'int1' state functon
+ *
+ * @param signal The signal to handle
+ * @param param The accompaning parameter
+ * @return NULL if the signal is handled otherwise operand1() (the parent state)
+ */
 stnext int1(int signal, void* param)
 {
     switch (signal)
@@ -249,6 +385,13 @@ stnext int1(int signal, void* param)
     return operand1;
 }
 
+/**
+ * The 'frac1' state functon
+ *
+ * @param signal The signal to handle
+ * @param param The accompaning parameter
+ * @return NULL if the signal is handled otherwise operand1() (the parent state)
+ */
 stnext frac1(int signal, void* param)
 {
     switch (signal)
@@ -263,11 +406,25 @@ stnext frac1(int signal, void* param)
     return operand1;
 }
 
+/**
+ * The 'error' state functon
+ *
+ * @param signal The signal to handle
+ * @param param The accompaning parameter
+ * @return on() (the parent state)
+ */
 stnext error(int signal, void* param)
 {
     return on;
 }
 
+/**
+ * The 'opEntered' state functon
+ *
+ * @param signal The signal to handle
+ * @param param The accompaning parameter
+ * @return NULL if the signal is handled otherwise on() (the parent state)
+ */
 stnext opEntered(int signal, void* param)
 {
     switch (signal)
@@ -300,6 +457,13 @@ stnext opEntered(int signal, void* param)
     return on;
 }
 
+/**
+ * The 'negated2' state functon
+ *
+ * @param signal The signal to handle
+ * @param param The accompaning parameter
+ * @return NULL if the signal is handled otherwise on() (the parent state)
+ */
 stnext negated2(int signal, void* param)
 {
     switch (signal)
@@ -326,6 +490,13 @@ stnext negated2(int signal, void* param)
     return on;
 }
 
+/**
+ * The 'operand2' state functon
+ *
+ * @param signal The signal to handle
+ * @param param The accompaning parameter
+ * @return NULL if the signal is handled otherwise on() (the parent state)
+ */
 stnext operand2(int signal, void* param)
 {
     char dblstr[_CVTBUFSIZE];
@@ -349,9 +520,12 @@ stnext operand2(int signal, void* param)
                 IupSetAttribute(textbox, "VALUE", dblstr);
             }
             simplehsm_transition_state(&hsm, opEntered);
-            // TODO - handle error like so
-            //IupSetAttribute(textbox, "VALUE", "ERROR");
-            //simplehsm_transition_state(&hsm, error);
+            /** @todo handle error like so:
+             * \code
+             * IupSetAttribute(textbox, "VALUE", "ERROR");
+             * simplehsm_transition_state(&hsm, error);
+             * \endcode
+             */
             return NULL;
         case SIG_EQUALS:
             _operand1 = update(_operand1, atof(IupGetAttribute(textbox, "VALUE")), _operator);
@@ -366,14 +540,24 @@ stnext operand2(int signal, void* param)
                 IupSetAttribute(textbox, "VALUE", dblstr);
             }
             simplehsm_transition_state(&hsm, result);
-            // TODO - handle error like so
-            //IupSetAttribute(textbox, "VALUE", "ERROR");
-            //simplehsm_transition_state(&hsm, error);
+            /** @todo handle error like so:
+             * \code
+             * IupSetAttribute(textbox, "VALUE", "ERROR");
+             * simplehsm_transition_state(&hsm, error);
+             * \endcode
+             */
             return NULL;
     }
     return on;
 }
 
+/**
+ * The 'zero2' state functon
+ *
+ * @param signal The signal to handle
+ * @param param The accompaning parameter
+ * @return NULL if the signal is handled otherwise operand2() (the parent state)
+ */
 stnext zero2(int signal, void* param)
 {
     switch (signal)
@@ -392,6 +576,13 @@ stnext zero2(int signal, void* param)
     return operand2;
 }
 
+/**
+ * The 'int2' state functon
+ *
+ * @param signal The signal to handle
+ * @param param The accompaning parameter
+ * @return NULL if the signal is handled otherwise operand2() (the parent state)
+ */
 stnext int2(int signal, void* param)
 {
     switch (signal)
@@ -410,6 +601,13 @@ stnext int2(int signal, void* param)
     return operand2;
 }
 
+/**
+ * The 'frac2' state functon
+ *
+ * @param signal The signal to handle
+ * @param param The accompaning parameter
+ * @return NULL if the signal is handled otherwise operand2() (the parent state)
+ */
 stnext frac2(int signal, void* param)
 {
     switch (signal)
