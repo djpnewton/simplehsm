@@ -65,7 +65,6 @@ enum simplehsm_signals_t
 // State machine definitions
 //
 
-// TODO - make these definitions better? (simplehsm_state_t etc?)
 /** 
  * Used by a state function when it returns no parent state
  */
@@ -76,6 +75,8 @@ enum simplehsm_signals_t
 typedef void* stnext;
 /**
  * A state function
+ *
+ * @todo make this definition better (simplehsm_state_t)?
  */
 typedef stnext (*stfunc)(int, void*);
 
