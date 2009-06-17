@@ -140,9 +140,8 @@ void negate(void)
  *
  * @param c The character to insert
  */
-void insert(char c)
+void append(char c)
 {
-    //! @todo Change this function name to append?
     if (clear_on_next)
     {
         IupSetAttribute(textbox, "VALUE", "");
@@ -161,9 +160,8 @@ void insert(char c)
  * @param operator_ The operator (+, -, *, /) to use
  * @return The result of the function
  */
-double update(double operand1, double operand2, char operator_)
+double calc(double operand1, double operand2, char operator_)
 {
-    //! @todo Change this function name to calc?
     switch (operator_)
     {
         case '+':
@@ -226,16 +224,16 @@ stnext ready(int signal, void* param)
             simplehsm_transition_state(&hsm, opEntered);
             return NULL;
         case SIG_DIGIT0:
-            insert('0');
+            append('0');
             clear_on_next = TRUE;
             simplehsm_transition_state(&hsm, zero1);
             return NULL;
         case SIG_DIGIT1_9:
-            insert(*((char*)param));
+            append(*((char*)param));
             simplehsm_transition_state(&hsm, int1);
             return NULL;
         case SIG_POINT:
-            insert('.');
+            append('.');
             simplehsm_transition_state(&hsm, frac1);
             return NULL;
     }
@@ -298,11 +296,11 @@ stnext negated1(int signal, void* param)
             simplehsm_transition_state(&hsm, zero1);
             return NULL;
         case SIG_DIGIT1_9:
-            insert(*((char*)param));
+            append(*((char*)param));
             simplehsm_transition_state(&hsm, int1);
             return NULL;
         case SIG_POINT:
-            insert('.');
+            append('.');
             simplehsm_transition_state(&hsm, frac1);
             return NULL;
         case SIG_CLEARENTRY:
@@ -349,11 +347,11 @@ stnext zero1(int signal, void* param)
         case SIG_DIGIT0:
             return NULL;
         case SIG_DIGIT1_9:
-            insert(*((char*)param));
+            append(*((char*)param));
             simplehsm_transition_state(&hsm, int1);
             return NULL;
         case SIG_POINT:
-            insert('.');
+            append('.');
             simplehsm_transition_state(&hsm, frac1);
             return NULL;
     }
@@ -372,13 +370,13 @@ stnext int1(int signal, void* param)
     switch (signal)
     {
         case SIG_DIGIT0:
-            insert('0');
+            append('0');
             return NULL;
         case SIG_DIGIT1_9:
-            insert(*((char*)param));
+            append(*((char*)param));
             return NULL;
         case SIG_POINT:
-            insert('.');
+            append('.');
             simplehsm_transition_state(&hsm, frac1);
             return NULL;
     }
@@ -397,10 +395,10 @@ stnext frac1(int signal, void* param)
     switch (signal)
     {
         case SIG_DIGIT0:
-            insert('0');
+            append('0');
             return NULL;
         case SIG_DIGIT1_9:
-            insert(*((char*)param));
+            append(*((char*)param));
             return NULL;
     }
     return operand1;
@@ -441,16 +439,16 @@ stnext opEntered(int signal, void* param)
             }
             break;
         case SIG_DIGIT0:
-            insert('0');
+            append('0');
             clear_on_next = TRUE;
             simplehsm_transition_state(&hsm, zero2);
             return NULL;
         case SIG_DIGIT1_9:
-            insert(*((char*)param));
+            append(*((char*)param));
             simplehsm_transition_state(&hsm, int2);
             return NULL;
         case SIG_POINT:
-            insert('.');
+            append('.');
             simplehsm_transition_state(&hsm, frac2);
             return NULL;
     }
@@ -475,11 +473,11 @@ stnext negated2(int signal, void* param)
             simplehsm_transition_state(&hsm, zero2);
             return NULL;
         case SIG_DIGIT1_9:
-            insert(*((char*)param));
+            append(*((char*)param));
             simplehsm_transition_state(&hsm, int2);
             return NULL;
         case SIG_POINT:
-            insert('.');
+            append('.');
             simplehsm_transition_state(&hsm, frac2);
             return NULL;
         case SIG_CLEARENTRY:
@@ -507,7 +505,7 @@ stnext operand2(int signal, void* param)
             simplehsm_transition_state(&hsm, opEntered);
             return NULL;
         case SIG_OPERATOR:
-            _operand1 = update(_operand1, atof(IupGetAttribute(textbox, "VALUE")), _operator);
+            _operand1 = calc(_operand1, atof(IupGetAttribute(textbox, "VALUE")), _operator);
             _operator = *((char*)param);
             if (_operand1 == (double)((int)_operand1))
             {
@@ -528,7 +526,7 @@ stnext operand2(int signal, void* param)
              */
             return NULL;
         case SIG_EQUALS:
-            _operand1 = update(_operand1, atof(IupGetAttribute(textbox, "VALUE")), _operator);
+            _operand1 = calc(_operand1, atof(IupGetAttribute(textbox, "VALUE")), _operator);
             if (_operand1 == (double)((int)_operand1))
             {
                 _itoa_s((int)_operand1, dblstr, _CVTBUFSIZE, 10);
@@ -565,11 +563,11 @@ stnext zero2(int signal, void* param)
         case SIG_DIGIT0:
             return NULL;
         case SIG_DIGIT1_9:
-            insert(*((char*)param));
+            append(*((char*)param));
             simplehsm_transition_state(&hsm, int2);
             return NULL;
         case SIG_POINT:
-            insert('.');
+            append('.');
             simplehsm_transition_state(&hsm, frac2);
             return NULL;
     }
@@ -588,13 +586,13 @@ stnext int2(int signal, void* param)
     switch (signal)
     {
         case SIG_DIGIT0:
-            insert('0');
+            append('0');
             return NULL;
         case SIG_DIGIT1_9:
-            insert(*((char*)param));
+            append(*((char*)param));
             return NULL;
         case SIG_POINT:
-            insert('.');
+            append('.');
             simplehsm_transition_state(&hsm, frac2);
             return NULL;
     }
@@ -613,10 +611,10 @@ stnext frac2(int signal, void* param)
     switch (signal)
     {
         case SIG_DIGIT0:
-            insert('0');
+            append('0');
             return NULL;
         case SIG_DIGIT1_9:
-            insert(*((char*)param));
+            append(*((char*)param));
             return NULL;
     }
     return operand2;
