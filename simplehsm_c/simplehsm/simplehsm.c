@@ -30,6 +30,27 @@
  * The simplehsm C implementation
  */
 
+/** \mainpage
+ *
+ * \section intro_sec Introduction
+ *
+ * simplehsm is designed to be a very simple implementation of a hierarchical state machine.
+ *
+ * From http://www.eventhelix.com/RealtimeMantra/HierarchicalStateMachine.htm:
+ *
+ * \verbatim
+In conventional state machine design, all states are considered at the same level. 
+The design does not capture the commonality that exists among states. In real life, 
+many states handle most  messages in similar fashion and differ only in handling of 
+few key messages. Even when the actual handling differs, there is still some 
+commonality. Hierarchical state machine design captures the commonality by organizing 
+the states as a hierarchy. The states at the higher level in hierarchy perform the 
+common message handling, while the lower level states inherit the commonality from 
+higher level ones and perform the state specific functions.
+\endverbatim
+ * 
+ * @todo A nice helpful overview like: http://ehiti.de/machine_objects/
+ */
 
 #include <stdio.h>
 #include <tchar.h>
