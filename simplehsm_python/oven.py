@@ -36,7 +36,10 @@ import simplehsm
 #
 
 ## The oven door has been opened
-SIG_OPEN_DOOR = simplehsm.SIG_USER,
+SIG_OPEN_DOOR = simplehsm.SIG_USER
+SIG_CLOSE_DOOR = simplehsm.SIG_USER + 1
+SIG_TOASTING = simplehsm.SIG_USER + 2
+SIG_BAKING = simplehsm.SIG_USER + 3
 
 #
 # Oven State hierachy
@@ -57,7 +60,7 @@ class Oven(simplehsm.SimpleHsm):
     #
     # Sets the initial state
     def __init__(self):
-        self.InitialState(self.oven);
+        self.Initialize(self.oven);
 
     #
     # Oven State implementations
@@ -87,6 +90,7 @@ class Oven(simplehsm.SimpleHsm):
     # @param state_event The signal to send to this state
     # @return None if the signal is handled, otherwise the parent state (oven())
     #
+    @simplehsm.deep_history
     def heating(self, state_event):
         global SIG_OPEN_DOOR
         if (state_event.sig == simplehsm.SIG_ENTRY):
@@ -101,6 +105,14 @@ class Oven(simplehsm.SimpleHsm):
         elif (state_event.sig == SIG_OPEN_DOOR):
             print "  heating: OPEN_DOOR signal!"
             self.TransitionState(self.doorOpen)
+            return None;
+        elif (state_event.sig == SIG_TOASTING):
+            print "  heating: TOASTING signal!"
+            self.TransitionState(self.toasting)
+            return None;
+        elif (state_event.sig == SIG_BAKING):
+            print "  heating: BAKING signal!"
+            self.TransitionState(self.baking)
             return None;
         return self.oven;
 
@@ -153,6 +165,9 @@ class Oven(simplehsm.SimpleHsm):
         elif (state_event.sig == simplehsm.SIG_EXIT):
             print "  doorOpen: exiting state"
             return None;
+        elif (state_event.sig == SIG_CLOSE_DOOR):
+            print "  doorOpen: CLOSE_DOOR signal!"
+            self.TransitionState(self.heating, to_deep_hist = True)
         return self.oven
 
     ##
@@ -169,7 +184,9 @@ class Oven(simplehsm.SimpleHsm):
 #
 def main():
     oven = Oven()
+    oven.SignalCurrentState(simplehsm.StateEvent(SIG_BAKING))
     oven.SignalCurrentState(simplehsm.StateEvent(SIG_OPEN_DOOR))
+    oven.SignalCurrentState(simplehsm.StateEvent(SIG_CLOSE_DOOR))
     oven.ShowStatus()
 
 main()

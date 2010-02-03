@@ -65,12 +65,24 @@ higher level ones and perform the state specific functions.
 * Initialise a simplehsm state machine.
 * 
 * @param hsm The state machine to initialise
-* @param new_state The initial or starting state
+* @param top_state The topmost (and initial) state of the hierarchy
 * 
 */
-void simplehsm_initial_state(simplehsm_t* hsm, stfunc new_state)
+void simplehsm_initialize(simplehsm_t* hsm, stfunc top_state)
 {
-  simplehsm_init_transition_state(hsm, new_state);
+  int i;
+  // init top state
+  hsm->top_state = top_state;
+#ifdef SHSM_DEEPHIST
+  // init deep history table
+  for (i = 0; i < MAX_HISTORY; i++)
+  {
+    hsm->deep_history_parent[i] = stnone;
+    hsm->deep_history_state[i] = stnone;
+  }
+#endif
+  // transition to initial top state
+  simplehsm_init_transition_state(hsm, top_state);
 }
 
 /**
@@ -94,6 +106,33 @@ BOOL _is_parent(simplehsm_t* hsm, stfunc parent_state, stfunc child_state)
   return FALSE;
 }
 
+#ifdef SHSM_DEEPHIST
+/**
+* Initiate a transition to a new state.
+*
+* This function will:
+*   - replace the target state with the deep history target if required
+*   - store a deep history target state if exiting a composite state with a deep history child
+*   - perform the exit/entry chain from the current state to the target state
+* 
+* @param hsm The state machine to transition
+* @param new_state The state to transition to
+* @param to_deep_hist Whether to transition to the states internal deep history psuedostate
+* 
+*/
+void simplehsm_transition_state_ex(simplehsm_t* hsm, stfunc new_state, BOOL to_deep_hist)
+{
+  // retrive historical state if appropriate
+  if (to_deep_hist)
+  {
+    new_state = simplehsm_retrieve_deephist(hsm, new_state);
+    if (new_state == stnone)
+    {
+      printf("simplehsm_transition_state_ex: ERROR - simplehsm_retrieve_deephist failed!");
+      return;
+    }
+  }
+#else
 /**
 * Initiate a transition to a new state.
 * 
@@ -103,10 +142,32 @@ BOOL _is_parent(simplehsm_t* hsm, stfunc parent_state, stfunc child_state)
 */
 void simplehsm_transition_state(simplehsm_t* hsm, stfunc new_state)
 {
+#endif
   // exit signal to current state
   if (hsm->current_state != NULL)
   {
     stfunc parent_state;
+#ifdef SHSM_DEEPHIST
+    // record the deep history state if appropriate
+    parent_state = (stfunc)hsm->current_state(SIG_NULL, NULL);
+    while (parent_state != stnone)
+    {
+      // the top state cannot have a history sub state and returns stnone to all 
+      // unhandled signals anyhow
+      if (parent_state == hsm->top_state)            
+        break;
+      // if the parent_state handles SIG_DEEPHIST and is not a parent of the new 
+      // state then record the deep history
+      else if ((stfunc)parent_state(SIG_DEEPHIST, NULL) == stdeephist &&
+               !_is_parent(hsm, parent_state, new_state))
+      {
+        simplehsm_record_deephist(hsm, parent_state, hsm->current_state);
+        break;
+      }
+      parent_state = (stfunc)parent_state(SIG_NULL, NULL);
+    }
+#endif
+    // state exit chain 
     hsm->current_state(SIG_EXIT, NULL);
     parent_state = (stfunc)hsm->current_state(SIG_NULL, NULL);
     while (!_is_parent(hsm, parent_state, new_state))
@@ -118,7 +179,7 @@ void simplehsm_transition_state(simplehsm_t* hsm, stfunc new_state)
     hsm->current_state = parent_state;
   }
   else
-    printf("simplehsm_transition_state: ERROR - current state is invalid!");
+    printf("simplehsm_transition_state_ex: ERROR - current state is invalid!");
   
   // entry signal to new state
   while (hsm->current_state != new_state)
@@ -142,6 +203,20 @@ void simplehsm_transition_state(simplehsm_t* hsm, stfunc new_state)
   // init signal to new state
   new_state(SIG_INIT, NULL);
 }
+
+#ifdef SHSM_DEEPHIST
+/**
+* Initiate a transition to a new state.
+* 
+* @param hsm The state machine to transition
+* @param new_state The state to transition to
+* 
+*/
+void simplehsm_transition_state(simplehsm_t* hsm, stfunc new_state)
+{
+  simplehsm_transition_state_ex(hsm, new_state, FALSE);
+}
+#endif
 
 /**
 * Initiate an initial transition to a new state (this function should only be used from a #SIG_INIT state event).
@@ -206,3 +281,54 @@ BOOL simplehsm_is_in_state(simplehsm_t* hsm, stfunc state)
   while (parent_state != NULL);
   return FALSE;
 }
+
+#ifdef SHSM_DEEPHIST
+/**
+* Record deep history psuedostate.
+* 
+* @param hsm The state machine
+* @param history_parent The parent state of the deep history psuedostate
+* @param history_state The state to return to if transitioning to the deep history psuedostate
+* 
+*/
+void simplehsm_record_deephist(simplehsm_t* hsm, stfunc history_parent, stfunc history_state)
+{
+  int i;
+  for (i = 0; i < MAX_HISTORY; i++)
+  {
+    if (hsm->deep_history_parent[i] == NULL || hsm->deep_history_parent[i] == history_parent)
+    {
+      hsm->deep_history_parent[i] = history_parent;
+      hsm->deep_history_state[i] = history_state;
+      return;
+    }
+  }
+  printf("simplehsm_record_deephist: ERROR - ran out of deep history table space!\n");
+}
+
+/**
+* Retrive deep history psuedostate.
+* 
+* @param hsm The state machine
+* @param history_parent The parent state of the deep history psuedostate
+* @return The state to transition to via the deep history psuedostate
+* 
+*/
+stfunc simplehsm_retrieve_deephist(simplehsm_t* hsm, stfunc history_parent)
+{
+  int i;
+  for (i = 0; i < MAX_HISTORY; i++)
+  {
+    if (hsm->deep_history_parent[i] == history_parent)
+    {
+      stfunc res = hsm->deep_history_state[i];
+      // remove history state from deep history table
+      hsm->deep_history_parent[i] = stnone;
+      hsm->deep_history_state[i] = stnone;
+      // return deep history target
+      return res;
+    }
+  }   
+  return stnone;
+}
+#endif

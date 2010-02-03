@@ -98,7 +98,7 @@ char _operator;
 void calchsm_init(Ihandle* tb)
 {
     textbox = tb;
-    simplehsm_initial_state(&hsm, on);
+    simplehsm_initialize(&hsm, on);
 }
 
 /**

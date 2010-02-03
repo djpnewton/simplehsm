@@ -12,6 +12,9 @@ namespace Oven
     public enum OvenSignal
     {
       OpenDoor = Signal.User,
+      CloseDoor,
+      Toasting,
+      Baking
     };
 
     //
@@ -28,7 +31,7 @@ namespace Oven
     {
         public Oven()
         {
-            InitialState(oven);
+            Initialize(oven);
         }
 
         //
@@ -52,6 +55,7 @@ namespace Oven
             return null;
         }
 
+        [DeepHistory]
         StateDelegate heating(StateEvent e)
         {
             switch (e.Signal)
@@ -68,6 +72,14 @@ namespace Oven
                 case (Signal)OvenSignal.OpenDoor:
                     System.Console.WriteLine("  heating: OPEN_DOOR signal!");
                     TransitionState(doorOpen);
+                    return null;
+                case (Signal)OvenSignal.Toasting:
+                    System.Console.WriteLine("  heating: TOASTING signal!");
+                    TransitionState(toasting);
+                    return null;
+                case (Signal)OvenSignal.Baking:
+                    System.Console.WriteLine("  heating: BAKING signal!");
+                    TransitionState(baking);
                     return null;
             }
             return oven;
@@ -117,6 +129,10 @@ namespace Oven
                 case Signal.Exit:
                     System.Console.WriteLine("  doorOpen: exiting state");
                     return null;
+                case (Signal)OvenSignal.CloseDoor:
+                    System.Console.WriteLine("  doorOpen: CLOSE_DOOR signal!");
+                    TransitionState(heating, true);
+                    return null;
             }
             return oven;
         }
@@ -135,7 +151,9 @@ namespace Oven
         static void Main(string[] args)
         {
             Oven oven = new Oven();
+            oven.SignalCurrentState(new StateEvent((Signal)OvenSignal.Baking));
             oven.SignalCurrentState(new StateEvent((Signal)OvenSignal.OpenDoor));
+            oven.SignalCurrentState(new StateEvent((Signal)OvenSignal.CloseDoor));
             oven.ShowStatus();
         }
     }

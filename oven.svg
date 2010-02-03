@@ -1,47 +1,67 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg height="284" version="1.1" width="444" xmlns="http://www.w3.org/2000/svg">
+<svg height="292" version="1.1" width="444" xmlns="http://www.w3.org/2000/svg">
 <rect fill="#00ffff" height="256" rx="16" ry="16" stroke="#00ffff" stroke-width="1" width="416" x="14" y="14"/>
 <rect fill="#ffffff" height="256" rx="16" ry="16" stroke="#ffffff" stroke-width="1" width="416" x="14" y="14"/>
 <rect fill="#ffffff" height="256" rx="16" ry="16" stroke="#000000" stroke-width="1" width="416" x="14" y="14"/>
-<text font-family="Lucida Grande" font-size="13" x="207" y="30">
+<text font-family="Dialog" font-size="13" x="209" y="32">
 oven</text>
-<line fill="#000000" stroke="#000000" stroke-width="1" x1="14" x2="429" y1="37" y2="37"/>
-<rect fill="#00ffff" height="96" rx="16" ry="16" stroke="#00ffff" stroke-width="1" width="120" x="278" y="110"/>
-<rect fill="#ffffff" height="96" rx="16" ry="16" stroke="#ffffff" stroke-width="1" width="120" x="278" y="110"/>
-<rect fill="#ffffff" height="96" rx="16" ry="16" stroke="#000000" stroke-width="1" width="120" x="278" y="110"/>
-<text font-family="Lucida Grande" font-size="13" x="307" y="126">
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="14" x2="429" y1="39" y2="39"/>
+<rect fill="#00ffff" height="96" rx="16" ry="16" stroke="#00ffff" stroke-width="1" width="120" x="294" y="110"/>
+<rect fill="#ffffff" height="96" rx="16" ry="16" stroke="#ffffff" stroke-width="1" width="120" x="294" y="110"/>
+<rect fill="#ffffff" height="96" rx="16" ry="16" stroke="#000000" stroke-width="1" width="120" x="294" y="110"/>
+<text font-family="Dialog" font-size="13" x="326" y="128">
 doorOpen</text>
-<line fill="#000000" stroke="#000000" stroke-width="1" x1="278" x2="397" y1="133" y2="133"/>
-<ellipse cx="30" cy="54" fill="#000000" rx="8.0" ry="8.0" stroke="#000000" stroke-width="1"/>
-<rect fill="#00ffff" height="168" rx="16" ry="16" stroke="#00ffff" stroke-width="1" width="152" x="46" y="78"/>
-<rect fill="#ffffff" height="168" rx="16" ry="16" stroke="#ffffff" stroke-width="1" width="152" x="46" y="78"/>
-<rect fill="#ffffff" height="168" rx="16" ry="16" stroke="#000000" stroke-width="1" width="152" x="46" y="78"/>
-<text font-family="Lucida Grande" font-size="13" x="98" y="94">
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="294" x2="413" y1="135" y2="135"/>
+<ellipse cx="38" cy="54" fill="#000000" rx="8.0" ry="8.0" stroke="#000000" stroke-width="1"/>
+<rect fill="#00ffff" height="168" rx="16" ry="16" stroke="#00ffff" stroke-width="1" width="152" x="30" y="78"/>
+<rect fill="#ffffff" height="168" rx="16" ry="16" stroke="#ffffff" stroke-width="1" width="152" x="30" y="78"/>
+<rect fill="#ffffff" height="168" rx="16" ry="16" stroke="#000000" stroke-width="1" width="152" x="30" y="78"/>
+<text font-family="Dialog" font-size="13" x="85" y="96">
 heating</text>
-<line fill="#000000" stroke="#000000" stroke-width="1" x1="46" x2="197" y1="101" y2="101"/>
-<polyline fill="none" points="34,60 46,78" stroke="#000000" stroke-width="1"/>
-<line fill="#000000" stroke="#000000" stroke-width="1" x1="33" x2="46" y1="71" y2="78"/>
-<line fill="#000000" stroke="#000000" stroke-width="1" x1="45" x2="46" y1="64" y2="78"/>
-<rect fill="#00ffff" height="46" rx="16" ry="16" stroke="#00ffff" stroke-width="1" width="70" x="86" y="126"/>
-<rect fill="#ffffff" height="46" rx="16" ry="16" stroke="#ffffff" stroke-width="1" width="70" x="86" y="126"/>
-<rect fill="#ffffff" height="46" rx="16" ry="16" stroke="#000000" stroke-width="1" width="70" x="86" y="126"/>
-<text font-family="Lucida Grande" font-size="13" x="95" y="142">
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="30" x2="181" y1="103" y2="103"/>
+<polyline fill="none" points="40,61 40,78" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="33" x2="40" y1="66" y2="78"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="47" x2="40" y1="66" y2="78"/>
+<rect fill="#00ffff" height="49" rx="16" ry="16" stroke="#00ffff" stroke-width="1" width="70" x="94" y="126"/>
+<rect fill="#ffffff" height="49" rx="16" ry="16" stroke="#ffffff" stroke-width="1" width="70" x="94" y="126"/>
+<rect fill="#ffffff" height="49" rx="16" ry="16" stroke="#000000" stroke-width="1" width="70" x="94" y="126"/>
+<text font-family="Dialog" font-size="13" x="106" y="144">
 toasting</text>
-<line fill="#000000" stroke="#000000" stroke-width="1" x1="86" x2="155" y1="149" y2="149"/>
-<rect fill="#00ffff" height="46" rx="16" ry="16" stroke="#00ffff" stroke-width="1" width="70" x="86" y="182"/>
-<rect fill="#ffffff" height="46" rx="16" ry="16" stroke="#ffffff" stroke-width="1" width="70" x="86" y="182"/>
-<rect fill="#ffffff" height="46" rx="16" ry="16" stroke="#000000" stroke-width="1" width="70" x="86" y="182"/>
-<text font-family="Lucida Grande" font-size="13" x="99" y="198">
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="94" x2="163" y1="151" y2="151"/>
+<rect fill="#00ffff" height="49" rx="16" ry="16" stroke="#00ffff" stroke-width="1" width="70" x="62" y="182"/>
+<rect fill="#ffffff" height="49" rx="16" ry="16" stroke="#ffffff" stroke-width="1" width="70" x="62" y="182"/>
+<rect fill="#ffffff" height="49" rx="16" ry="16" stroke="#000000" stroke-width="1" width="70" x="62" y="182"/>
+<text font-family="Dialog" font-size="13" x="78" y="200">
 baking</text>
-<line fill="#000000" stroke="#000000" stroke-width="1" x1="86" x2="155" y1="205" y2="205"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="62" x2="131" y1="207" y2="207"/>
 <ellipse cx="62" cy="118" fill="#000000" rx="8.0" ry="8.0" stroke="#000000" stroke-width="1"/>
-<polyline fill="none" points="69,121 86,126" stroke="#000000" stroke-width="1"/>
-<line fill="#000000" stroke="#000000" stroke-width="1" x1="72" x2="86" y1="129" y2="126"/>
-<line fill="#000000" stroke="#000000" stroke-width="1" x1="76" x2="86" y1="115" y2="126"/>
-<polyline fill="none" points="198,162 278,162" stroke="#000000" stroke-width="1"/>
-<line fill="#000000" stroke="#000000" stroke-width="1" x1="266" x2="278" y1="169" y2="162"/>
-<line fill="#000000" stroke="#000000" stroke-width="1" x1="266" x2="278" y1="155" y2="162"/>
-<text font-family="Lucida Grande" font-size="13" x="199" y="157">
+<polyline fill="none" points="69,120 94,126" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="80" x2="94" y1="130" y2="126"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="83" x2="94" y1="116" y2="126"/>
+<polyline fill="none" points="182,162 294,162" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="282" x2="294" y1="169" y2="162"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="282" x2="294" y1="155" y2="162"/>
+<text font-family="Dialog" font-size="13" x="197" y="158">
 OPEN_DOOR</text>
+<ellipse cx="162" cy="202" fill="#000000" rx="12.0" ry="12.0" stroke="#000000" stroke-width="1"/>
+<ellipse cx="162" cy="202" fill="#ffffff" rx="11.0" ry="11.0" stroke="#ffffff" stroke-width="1"/>
+<text font-family="Dialog" font-size="13" x="158" y="208">
+H*</text>
+<polyline fill="none" points="294,182 206,182 173,200" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="180" x2="173" y1="188" y2="200"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="186" x2="173" y1="200" y2="200"/>
+<text font-family="Dialog" font-size="13" x="188" y="177">
+CLOSE_DOOR</text>
+<polyline fill="none" points="294,198 294,198" stroke="#000000" stroke-width="1"/>
+<polyline fill="none" points="38,246 38,278 118,278 118,231" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="125" x2="118" y1="243" y2="231"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="111" x2="118" y1="243" y2="231"/>
+<text font-family="Dialog" font-size="13" x="56" y="267">
+BAKING</text>
+<polyline fill="none" points="30,174 22,174 22,142 94,142" stroke="#000000" stroke-width="1"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="82" x2="94" y1="149" y2="142"/>
+<line fill="#000000" stroke="#000000" stroke-width="1" x1="82" x2="94" y1="135" y2="142"/>
+<text font-family="Dialog" font-size="13" x="26" y="164">
+TOASTING</text>
 </svg>

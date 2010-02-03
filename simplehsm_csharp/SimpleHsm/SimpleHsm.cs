@@ -67,16 +67,25 @@ namespace SimpleHsm
      */
     public enum Signal
     {
-        Null  = 0, /**< Null signal, all state functions should ignore this signal and return their parent state (or null if the top level state) */
-        Init  = 1, /**< Initialisation signal, a state function should transition to a default substate (SimpleHsm::SimpleHsm::InitTransitionState()) if it has substates */
-        Entry = 2, /**< Entry signal, a state function should perform its entry actions (if any) */
-        Exit  = 3, /**< Exit signal, a state function should perform its exit actions (if any) */
-        User  = 4, /**< User signals should start from this index */
+        Null     = 0, /**< Null signal, all state functions should ignore this signal and return their parent state (or null if the top level state) */
+        Init     = 1, /**< Initialisation signal, a state function should transition to a default substate (SimpleHsm::SimpleHsm::InitTransitionState()) if it has substates */
+        Entry    = 2, /**< Entry signal, a state function should perform its entry actions (if any) */
+        Exit     = 3, /**< Exit signal, a state function should perform its exit actions (if any) */
+        User     = 4, /**< User signals should start from this index */
     };
 
     //
     // State machine definitions
     //
+
+    /**
+     * Record deep history signal, a state function should have this attribute if it contains a deep history psuedostate
+     */
+    [AttributeUsage(AttributeTargets.Method)]
+    public class DeepHistory : Attribute
+    {
+       public DeepHistory() { }
+    }
 
     /** 
      * StateEvent class
@@ -116,6 +125,12 @@ namespace SimpleHsm
         /** Current state variable */
         StateDelegate curState = null;
 
+        /** The topmost state of the state machine hierarchy */
+        StateDelegate topState = null;
+
+        List<StateDelegate> deepHistoryParent = new List<StateDelegate>();
+        List<StateDelegate> deepHistoryState = new List<StateDelegate>();
+
         //
         // State utility function implementations
         //
@@ -123,12 +138,18 @@ namespace SimpleHsm
         /**
         * Initialise a simplehsm state machine.
         * 
-        * @param newState The initial or starting state
+        * @param topState The topmost (and initial) state of the hierarchy
         * 
         */
-        protected void InitialState(StateDelegate newState)
+        protected void Initialize(StateDelegate topState)
         {
-            InitTransitionState(newState);
+            // init top state
+            this.topState = topState;
+            // init deep history table
+            deepHistoryParent.Clear();
+            deepHistoryState.Clear();
+            // transition to initial top state
+            InitTransitionState(topState);
         }
 
         /**
@@ -152,17 +173,65 @@ namespace SimpleHsm
         }
 
         /**
-        * Initiate a transition to a new state.
+        * Check if a state delegates method has the DeepHistory attribute
         * 
-        * @param newState The state to transition to
+        * @param state The state to check
+        * @return True if the method refered to by the delegate has the DeepHistory attribute
         * 
         */
-        protected void TransitionState(StateDelegate newState)
+        protected bool HasDeepHistAttrib(StateDelegate state)
         {
+            return state.Method.GetCustomAttributes(typeof(DeepHistory), false).Length > 0;
+        }
+
+        /**
+        * Initiate a transition to a new state.
+        * 
+        * This function will:
+        *   - replace the target state with the deep history target if required
+        *   - store a deep history target state if exiting a composite state with a deep history child
+        *   - perform the exit/entry chain from the current state to the target state
+        *
+        * @param newState The state to transition to
+        * @param toDeepHist Whether to transition to the states internal deep history psuedostate
+        *
+        */
+        protected void TransitionState(StateDelegate newState, bool toDeepHist)
+        {
+            // retrive historical state if appropriate
+            if (toDeepHist)
+            {
+                newState = RetrieveDeephist(newState);
+                if (newState == null)
+                {
+                    System.Console.WriteLine("TransitionState: ERROR - RetrieveDeephist failed!");
+                    return;
+                }
+            }
+
             // exit signal to current state
             if (curState != null)
             {
                 StateDelegate parentState;
+                // record the deep history state if appropriate
+                parentState = curState(new StateEvent(Signal.Null));
+                while (parentState != null)
+                {
+                    // the top state cannot have a history sub state and returns stnone to all 
+                    // unhandled signals anyhow
+                    if (parentState == topState)
+                        break;
+                    // if the parentState has the DeepHist attribute and is not a parent of the new 
+                    // state then record the deep history
+                    else if (HasDeepHistAttrib(parentState) &&
+                             !IsParent(parentState, newState))
+                    {
+                        RecordDeephist(parentState, curState);
+                        break;
+                    }
+                    parentState = parentState(new StateEvent(Signal.Null));
+                }
+                // state exit chain 
                 curState(new StateEvent(Signal.Exit));
                 parentState = curState(new StateEvent(Signal.Null));
                 while (!IsParent(parentState, newState))
@@ -197,6 +266,17 @@ namespace SimpleHsm
 
             // init signal to new state
             newState(new StateEvent(Signal.Init));
+        }
+
+        /**
+        * Initiate a transition to a new state.
+        * 
+        * @param newState The state to transition to
+        * 
+        */
+        protected void TransitionState(StateDelegate newState)
+        {
+            TransitionState(newState, false);
         }
 
         /**
@@ -258,6 +338,51 @@ namespace SimpleHsm
             while (parentState != null);
             return false;
         }
-        
+
+        /**
+        * Record deep history psuedostate.
+        * 
+        * @param historyParent The parent state of the deep history psuedostate
+        * @param historyState The state to return to if transitioning to the deep history psuedostate
+        * 
+        */
+        void RecordDeephist(StateDelegate historyParent, StateDelegate historyState)
+        {
+            for (int i = 0; i < deepHistoryParent.Count; i++)
+            {
+                if (deepHistoryParent[i] == historyParent)
+                {
+                    deepHistoryParent[i] = historyParent;
+                    deepHistoryState[i] = historyState;
+                    return;
+                }
+            }
+            deepHistoryParent.Add(historyParent);
+            deepHistoryState.Add(historyState);
+        }
+
+        /**
+        * Retrive deep history psuedostate.
+        * 
+        * @param historyParent The parent state of the deep history psuedostate
+        * @return The state to transition to via the deep history psuedostate
+        * 
+        */
+        private StateDelegate RetrieveDeephist(StateDelegate historyParent)
+        {
+            for (int i = 0; i < deepHistoryParent.Count; i++)
+            {
+                if (deepHistoryParent[i] == historyParent)
+                {
+                    StateDelegate res = deepHistoryState[i];
+                    // remove history state from deep history table
+                    deepHistoryParent.RemoveAt(i);
+                    deepHistoryState.RemoveAt(i);
+                    // return deep history target
+                    return res;
+                }
+            }
+            return null;
+        }
     }
 }

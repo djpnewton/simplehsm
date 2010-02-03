@@ -66,6 +66,16 @@ SIG_EXIT  = 3
 ## User signals should start from this index
 SIG_USER  = 4
 
+##
+# Add a deep history psuedostate to a composite state
+#
+# @param state The state to recive a deep history child state
+#
+def deep_history(state):
+    state.deep_hist = True
+    return state
+
+
 ## StateEvent class
 # 
 # The state event carries the details about the event (what signal caused the event) and can be subclassed to provide extra parameters
@@ -88,6 +98,12 @@ class SimpleHsm:
     ## Current state variable
     __cur_state = None
 
+    ## The topmost state of the state machine hierachy
+    __top_state = None
+
+    __deep_hist_parent = []
+    __deep_hist_state = []
+
     #
     # State utility function implementations
     #
@@ -95,10 +111,16 @@ class SimpleHsm:
     ##
     # Initialise a simplehsm state machine.
     # 
-    # @param new_state The initial or starting state
+    # @param top_state The topmost (and initial) state of the hierachy
     # 
-    def InitialState(self, new_state):
-        self.InitTransitionState(new_state)
+    def Initialize(self, top_state):
+        # init top state
+        self.__top_state = top_state
+        # init deep history table
+        self.__deep_hist_parent = []
+        self.__deep_hist_state = []
+        # transition to initial top state
+        self.InitTransitionState(top_state)
 
     ##
     # Check is one state is the parent of another.
@@ -116,13 +138,51 @@ class SimpleHsm:
         return False
 
     ##
+    # Check if a state has the deep history attribute
+    #
+    # 
+    # @param state The state to check
+    # @return True if the method refered to by the delegate has the DeepHistory attribute
+    #
+    def __HasDeepHistAttrib(self, state):
+        return state.__dict__.has_key("deep_hist")
+
+    ##
     # Initiate a transition to a new state.
+    # This function will:
+    #   - replace the target state with the deep history target if required
+    #   - store a deep history target state if exiting a composite state with a deep history child
+    #   - perform the exit/entry chain from the current state to the target state
     # 
     # @param new_state The state to transition to
+    # @param to_deep_hist Whether to transition to the states internal deep history psuedostate
     # 
-    def TransitionState(self, new_state):
+    def TransitionState(self, new_state, to_deep_hist = False):
+
+        # retrive historical state if appropriate
+        if to_deep_hist:
+            new_state = self.RetrieveDeephist(new_state)
+            if new_state == None:
+                print "TransitionState: ERROR - RetrieveDeephist failed!"
+                return
+
         # exit signal to current state
         if (self.__cur_state):
+            # record the deep history state if appropriate
+            parent_state = self.__cur_state(StateEvent(SIG_NULL))
+            while parent_state != None:
+                # the top state cannot have a history sub state and returns stnone to all 
+                # unhandled signals anyhow
+                if parent_state == self.__top_state:
+                    break
+                # if the parentState has the DeepHist attribute and is not a parent of the new 
+                # state then record the deep history
+                elif (self.__HasDeepHistAttrib(parent_state) and
+                      (not self.__IsParent(parent_state, new_state))):
+                    self.RecordDeephist(parent_state, self.__cur_state)
+                    break
+                parent_state = parent_state(StateEvent(SIG_NULL))
+            # state exit chain 
             self.__cur_state(StateEvent(SIG_EXIT))
             parent_state = self.__cur_state(StateEvent(SIG_NULL))
             while (not self.__IsParent(parent_state, new_state)):
@@ -195,6 +255,36 @@ class SimpleHsm:
         return False
 
 
+    ##
+    # Record deep history psuedostate.
+    # 
+    # @param history_parent The parent state of the deep history psuedostate
+    # @param history_state The state to return to if transitioning to the deep history psuedostate
+    # 
+    #
+    def RecordDeephist(self, history_parent, history_state):
+        for i in range(len(self.__deep_hist_parent)):
+            if self.__deep_hist_parent[i] == history_parent:
+                self.__deep_hist_parent[i] = history_parent
+                self.__deep_hist_state[i] = history_state
+                return
+        self.__deep_hist_parent.append(history_parent)
+        self.__deep_hist_state.append(history_state)
 
-
-
+    ##
+    # Retrive deep history psuedostate.
+    # 
+    # @param history_parent The parent state of the deep history psuedostate
+    # @return The state to transition to via the deep history psuedostate
+    # 
+    #
+    def RetrieveDeephist(self, history_parent):
+        for i in range(len(self.__deep_hist_parent)):
+            if self.__deep_hist_parent[i] == history_parent:
+                res = self.__deep_hist_state[i]
+                # remove history state from deep history table
+                self.__deep_hist_parent.remove(history_parent)
+                self.__deep_hist_state.remove(res)
+                # return deep history target
+                return res
+        return None

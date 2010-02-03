@@ -46,7 +46,7 @@ namespace Calc
         public CalcHsm(TextBox tb)
         {
             textBox = tb;
-            InitialState(on);
+            Initialize(on);
         }
 
         //
