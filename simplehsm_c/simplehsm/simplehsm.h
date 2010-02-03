@@ -57,8 +57,11 @@ enum simplehsm_signals_t
   SIG_NULL     = 0, /**< Null signal, all state functions should ignore this signal and return their parent state (or #stnone if the top level state) */
   SIG_INIT     = 1, /**< Initialisation signal, a state function should transition to a default substate (simplehsm_init_transition_state()) if it has substates */
   SIG_ENTRY    = 2, /**< Entry signal, a state function should perform its entry actions (if any) */
-  SIG_EXIT     = 3, /**< Exit signal, a state function should perform its exit actions (if any) */
-  SIG_USER     = 4, /**< User signals should start from this index */
+#ifdef SHSM_DEEPHIST
+  SIG_DEEPHIST = 3, /**< Record deep history signal, a state function should return 'stdeephist' if it contains a deep history psuedostate */
+#endif
+  SIG_EXIT     = 4, /**< Exit signal, a state function should perform its exit actions (if any) */
+  SIG_USER     = 5, /**< User signals should start from this index */
 };
 
 //
@@ -70,6 +73,14 @@ enum simplehsm_signals_t
  * or because the signal is handled).
  */
 #define stnone NULL
+
+#ifdef SHSM_DEEPHIST
+/** 
+ * Used by a state function when it handles a #SIG_DEEPHIST signal (which represents that the
+ * state has a child deep history psuedostate).
+ */
+#define stdeephist NULL
+#endif
 
 /**
  * A generic pointer that points to a state function
@@ -116,7 +127,9 @@ void simplehsm_init_transition_state(simplehsm_t* hsm, stfunc new_state);
 void simplehsm_signal_current_state(simplehsm_t* hsm, int signal, void* param);
 BOOL simplehsm_is_in_state(simplehsm_t* hsm, stfunc state);
 #ifdef SHSM_DEEPHIST
-void simplehsm_store_current_deephist(simplehsm_t* hsm, stfunc history_parent);
+void simplehsm_record_deephist(simplehsm_t* hsm, stfunc history_parent, stfunc history_state);
+stfunc simplehsm_retrieve_deephist(simplehsm_t* hsm, stfunc history_parent);
 #endif
+
 //---------------------------------------------------------------------------
 #endif  //simplehsmH
