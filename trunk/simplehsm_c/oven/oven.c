@@ -41,6 +41,9 @@
 enum oven_signals_t
 {
   SIG_OPEN_DOOR = SIG_USER, /**< The oven door has been opened */
+  SIG_CLOSE_DOOR,           /**< The oven door has been closed */
+  SIG_TOASTING,             /**< The toasting mode has been selected */
+  SIG_BAKING                /**< The baking mode has been selected */
 };
 
 /**
@@ -88,11 +91,11 @@ stnext oven(int signal, void* param)
 }
 
 /**
- * The heating state
+ * The heating state. This state contains a deep history psuedostate.
  * 
  * @param signal The signal to send to this state
  * @param param A signal specific parameter
- * @return #stnone if the signal is handled, otherwise the parent state (oven())
+ * @return #stnone/#stdeephist if the signal is handled, otherwise the parent state (oven())
  */
 stnext heating(int signal, void* param)
 {
@@ -104,12 +107,22 @@ stnext heating(int signal, void* param)
     case SIG_INIT:
       simplehsm_init_transition_state(&hsm, toasting);
       return stnone;
+    case SIG_DEEPHIST:
+      return stdeephist; // tell framework to record deep history state
     case SIG_EXIT:
       printf("  heating: exiting state\n");
       return stnone;
     case SIG_OPEN_DOOR:
       printf("  heating: OPEN_DOOR signal!\n");
       simplehsm_transition_state(&hsm, doorOpen);
+      return stnone;
+    case SIG_TOASTING:
+      printf("  heating: TOASTING signal!\n");
+      simplehsm_transition_state(&hsm, toasting);
+      return stnone;
+    case SIG_BAKING:
+      printf("  heating: BAKING signal!\n");
+      simplehsm_transition_state(&hsm, baking);
       return stnone;
   }
   return (stnext)oven;
@@ -180,6 +193,10 @@ stnext doorOpen(int signal, void* param)
     case SIG_EXIT:
       printf("  doorOpen: exiting state\n");
       return stnone;
+    case SIG_CLOSE_DOOR:
+      printf("  doorOpen: CLOSE_DOOR signal!\n");
+      simplehsm_transition_state_ex(&hsm, heating, TRUE);
+      return stnone;
   }
   return (stnext)oven;
 }
@@ -207,8 +224,10 @@ void show_status(simplehsm_t* hsm)
  */
 int _tmain(int argc, _TCHAR* argv[])
 {
-  simplehsm_initial_state(&hsm, oven);
+  simplehsm_initialize(&hsm, oven);
+  simplehsm_signal_current_state(&hsm, SIG_BAKING, NULL);
   simplehsm_signal_current_state(&hsm, SIG_OPEN_DOOR, NULL);
+  simplehsm_signal_current_state(&hsm, SIG_CLOSE_DOOR, NULL);
   show_status(&hsm);
   return 0;
 }
