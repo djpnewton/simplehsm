@@ -57,6 +57,11 @@ higher level ones and perform the state specific functions.
 
 #include "simplehsm.h"
 
+#ifdef SHSM_DEEPHIST
+void simplehsm_record_deephist(simplehsm_t* hsm, stfunc history_parent, stfunc history_state);
+stfunc simplehsm_retrieve_deephist(simplehsm_t* hsm, stfunc history_parent);
+#endif
+
 //
 // State utility function implementations
 //
@@ -147,26 +152,6 @@ void simplehsm_transition_state(simplehsm_t* hsm, stfunc new_state)
   if (hsm->current_state != NULL)
   {
     stfunc parent_state;
-#ifdef SHSM_DEEPHIST
-    // record the deep history state if appropriate
-    parent_state = (stfunc)hsm->current_state(SIG_NULL, NULL);
-    while (parent_state != stnone)
-    {
-      // the top state cannot have a history sub state and returns stnone to all 
-      // unhandled signals anyhow
-      if (parent_state == hsm->top_state)            
-        break;
-      // if the parent_state handles SIG_DEEPHIST and is not a parent of the new 
-      // state then record the deep history
-      else if ((stfunc)parent_state(SIG_DEEPHIST, NULL) == stdeephist &&
-               !_is_parent(hsm, parent_state, new_state))
-      {
-        simplehsm_record_deephist(hsm, parent_state, hsm->current_state);
-        break;
-      }
-      parent_state = (stfunc)parent_state(SIG_NULL, NULL);
-    }
-#endif
     // state exit chain 
     hsm->current_state(SIG_EXIT, NULL);
     parent_state = (stfunc)hsm->current_state(SIG_NULL, NULL);
@@ -283,6 +268,18 @@ BOOL simplehsm_is_in_state(simplehsm_t* hsm, stfunc state)
 }
 
 #ifdef SHSM_DEEPHIST
+/**
+* Store the current state as a deep history psuedostate.
+* 
+* @param hsm The state machine
+* @param history_parent The parent state of the deep history psuedostate
+* 
+*/
+void simplehsm_store_current_deephist(simplehsm_t* hsm, stfunc history_parent)
+{
+  simplehsm_record_deephist(hsm, history_parent, hsm->current_state);
+}
+
 /**
 * Record deep history psuedostate.
 * 

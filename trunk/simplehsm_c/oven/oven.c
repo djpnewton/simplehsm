@@ -106,9 +106,8 @@ stnext heating(int signal, void* param)
       return stnone;
     case SIG_INIT:
       simplehsm_init_transition_state(&hsm, toasting);
+      simplehsm_store_current_deephist(&hsm, heating); // tell framework to record deep history state
       return stnone;
-    case SIG_DEEPHIST:
-      return stdeephist; // tell framework to record deep history state
     case SIG_EXIT:
       printf("  heating: exiting state\n");
       return stnone;
