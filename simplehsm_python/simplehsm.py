@@ -101,8 +101,8 @@ class SimpleHsm:
     ## The topmost state of the state machine hierachy
     __top_state = None
 
-    __deep_hist_parent = []
-    __deep_hist_state = []
+    ## The table of current deep history psuedostates 
+    __deep_hist_table = []
 
     #
     # State utility function implementations
@@ -117,8 +117,7 @@ class SimpleHsm:
         # init top state
         self.__top_state = top_state
         # init deep history table
-        self.__deep_hist_parent = []
-        self.__deep_hist_state = []
+        self.__deep_hist_table = []
         # transition to initial top state
         self.InitTransitionState(top_state)
 
@@ -263,13 +262,11 @@ class SimpleHsm:
     # 
     #
     def RecordDeephist(self, history_parent, history_state):
-        for i in range(len(self.__deep_hist_parent)):
-            if self.__deep_hist_parent[i] == history_parent:
-                self.__deep_hist_parent[i] = history_parent
-                self.__deep_hist_state[i] = history_state
+        for i in range(len(self.__deep_hist_table)):
+            if self.__deep_hist_table[i][0] == history_parent:
+                self.__deep_hist_table[i] = (history_parent, history_state)
                 return
-        self.__deep_hist_parent.append(history_parent)
-        self.__deep_hist_state.append(history_state)
+        self.__deep_hist_table.append((history_parent, history_state))
 
     ##
     # Retrive deep history psuedostate.
@@ -279,12 +276,11 @@ class SimpleHsm:
     # 
     #
     def RetrieveDeephist(self, history_parent):
-        for i in range(len(self.__deep_hist_parent)):
-            if self.__deep_hist_parent[i] == history_parent:
-                res = self.__deep_hist_state[i]
+        for i in range(len(self.__deep_hist_table)):
+            if self.__deep_hist_table[i][0] == history_parent:
+                res = self.__deep_hist_table[i][1]
                 # remove history state from deep history table
-                self.__deep_hist_parent.remove(history_parent)
-                self.__deep_hist_state.remove(res)
+                self.__deep_hist_table.remove(self.__deep_hist_table[i])
                 # return deep history target
                 return res
         return None

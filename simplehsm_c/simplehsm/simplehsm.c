@@ -77,8 +77,8 @@ void simplehsm_initialize(simplehsm_t* hsm, stfunc top_state)
   // init deep history table
   for (i = 0; i < MAX_HISTORY; i++)
   {
-    hsm->deep_history_parent[i] = stnone;
-    hsm->deep_history_state[i] = stnone;
+    hsm->deep_history_table[i].parent = stnone;
+    hsm->deep_history_table[i].child = stnone;
   }
 #endif
   // transition to initial top state
@@ -296,10 +296,10 @@ void simplehsm_record_deephist(simplehsm_t* hsm, stfunc history_parent, stfunc h
   int i;
   for (i = 0; i < MAX_HISTORY; i++)
   {
-    if (hsm->deep_history_parent[i] == NULL || hsm->deep_history_parent[i] == history_parent)
+    if (hsm->deep_history_table[i].parent == stnone || hsm->deep_history_table[i].parent == history_parent)
     {
-      hsm->deep_history_parent[i] = history_parent;
-      hsm->deep_history_state[i] = history_state;
+      hsm->deep_history_table[i].parent = history_parent;
+      hsm->deep_history_table[i].child = history_state;
       return;
     }
   }
@@ -319,12 +319,12 @@ stfunc simplehsm_retrieve_deephist(simplehsm_t* hsm, stfunc history_parent)
   int i;
   for (i = 0; i < MAX_HISTORY; i++)
   {
-    if (hsm->deep_history_parent[i] == history_parent)
+    if (hsm->deep_history_table[i].parent == history_parent)
     {
-      stfunc res = hsm->deep_history_state[i];
+      stfunc res = hsm->deep_history_table[i].child;
       // remove history state from deep history table
-      hsm->deep_history_parent[i] = stnone;
-      hsm->deep_history_state[i] = stnone;
+      hsm->deep_history_table[i].parent = stnone;
+      hsm->deep_history_table[i].child = stnone;
       // return deep history target
       return res;
     }

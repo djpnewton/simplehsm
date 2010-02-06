@@ -87,6 +87,21 @@ namespace SimpleHsm
        public DeepHistory() { }
     }
 
+    /**
+     * A stucture to hold an entry in the deep history table
+     */
+    public class DeepHistoryEntry
+    {
+        public StateDelegate Parent;
+        public StateDelegate Child;
+
+        public DeepHistoryEntry(StateDelegate parent, StateDelegate state)
+        {
+            Parent = parent;
+            Child = state;
+        }
+    }
+
     /** 
      * StateEvent class
      * 
@@ -128,8 +143,8 @@ namespace SimpleHsm
         /** The topmost state of the state machine hierarchy */
         StateDelegate topState = null;
 
-        List<StateDelegate> deepHistoryParent = new List<StateDelegate>();
-        List<StateDelegate> deepHistoryState = new List<StateDelegate>();
+        /** The table of current deep history psuedostates */
+        List<DeepHistoryEntry> deepHistoryTable = new List<DeepHistoryEntry>();
 
         //
         // State utility function implementations
@@ -146,8 +161,7 @@ namespace SimpleHsm
             // init top state
             this.topState = topState;
             // init deep history table
-            deepHistoryParent.Clear();
-            deepHistoryState.Clear();
+            deepHistoryTable.Clear();
             // transition to initial top state
             InitTransitionState(topState);
         }
@@ -348,17 +362,15 @@ namespace SimpleHsm
         */
         void RecordDeephist(StateDelegate historyParent, StateDelegate historyState)
         {
-            for (int i = 0; i < deepHistoryParent.Count; i++)
+            for (int i = 0; i < deepHistoryTable.Count; i++)
             {
-                if (deepHistoryParent[i] == historyParent)
+                if (deepHistoryTable[i].Parent == historyParent)
                 {
-                    deepHistoryParent[i] = historyParent;
-                    deepHistoryState[i] = historyState;
+                    deepHistoryTable[i] = new DeepHistoryEntry(historyParent, historyState);
                     return;
                 }
             }
-            deepHistoryParent.Add(historyParent);
-            deepHistoryState.Add(historyState);
+            deepHistoryTable.Add(new DeepHistoryEntry(historyParent, historyState));
         }
 
         /**
@@ -370,14 +382,13 @@ namespace SimpleHsm
         */
         private StateDelegate RetrieveDeephist(StateDelegate historyParent)
         {
-            for (int i = 0; i < deepHistoryParent.Count; i++)
+            for (int i = 0; i < deepHistoryTable.Count; i++)
             {
-                if (deepHistoryParent[i] == historyParent)
+                if (deepHistoryTable[i].Parent == historyParent)
                 {
-                    StateDelegate res = deepHistoryState[i];
+                    StateDelegate res = deepHistoryTable[i].Child;
                     // remove history state from deep history table
-                    deepHistoryParent.RemoveAt(i);
-                    deepHistoryState.RemoveAt(i);
+                    deepHistoryTable.RemoveAt(i);
                     // return deep history target
                     return res;
                 }
