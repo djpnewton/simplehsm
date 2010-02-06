@@ -99,6 +99,15 @@ typedef stnext (*stfunc)(int, void*);
  * The maximum number of deep history psuedostates supported in a single simplehsm instance
  */
 #define MAX_HISTORY 10
+
+/**
+ * A stucture to hold an entry in the deep history table
+ */
+typedef struct
+{
+  stfunc parent;
+  stfunc child;
+} deep_history_t;
 #endif
 
 /**
@@ -109,8 +118,7 @@ typedef struct
   stfunc current_state; /**< The current state of the state machine */
   stfunc top_state;     /**< The topmost state of the state machine hierarchy */
 #ifdef SHSM_DEEPHIST
-  stfunc deep_history_parent[MAX_HISTORY]; 
-  stfunc deep_history_state[MAX_HISTORY];
+  deep_history_t deep_history_table[MAX_HISTORY]; /**< The table of current deep history psuedostates */
 #endif
 } simplehsm_t;
 
