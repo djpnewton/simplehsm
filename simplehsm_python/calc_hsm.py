@@ -83,7 +83,7 @@ class CalcHsm(SimpleHsm):
     # @param entry TheTkinter text entry widget that the calc state machine will use
     def __init__(self, entry):
         self.entry = entry
-        self.InitialState(self.on)
+        self.Initialize(self.on)
 
     #
     # State variables
