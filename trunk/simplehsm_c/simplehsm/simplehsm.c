@@ -162,7 +162,6 @@ void simplehsm_transition_state(simplehsm_t* hsm, stfunc new_state)
                !_is_parent(hsm, parent_state, new_state))
       {
         simplehsm_record_deephist(hsm, parent_state, hsm->current_state);
-        break;
       }
       parent_state = (stfunc)parent_state(SIG_NULL, NULL);
     }
