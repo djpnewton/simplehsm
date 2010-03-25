@@ -13,6 +13,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oven", "oven\oven.vcproj", 
 		{5ED3CB59-07E3-4786-9052-BEB8C1606E5C} = {5ED3CB59-07E3-4786-9052-BEB8C1606E5C}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nested_deephist", "nested_deephist\nested_deephist.vcproj", "{DF713381-96A7-433B-84CF-D467888B56F7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5ED3CB59-07E3-4786-9052-BEB8C1606E5C} = {5ED3CB59-07E3-4786-9052-BEB8C1606E5C}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -31,6 +36,10 @@ Global
 		{742EE97D-9969-4D7D-9565-262DECD3B752}.Debug|Win32.Build.0 = Debug|Win32
 		{742EE97D-9969-4D7D-9565-262DECD3B752}.Release|Win32.ActiveCfg = Release|Win32
 		{742EE97D-9969-4D7D-9565-262DECD3B752}.Release|Win32.Build.0 = Release|Win32
+		{DF713381-96A7-433B-84CF-D467888B56F7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DF713381-96A7-433B-84CF-D467888B56F7}.Debug|Win32.Build.0 = Debug|Win32
+		{DF713381-96A7-433B-84CF-D467888B56F7}.Release|Win32.ActiveCfg = Release|Win32
+		{DF713381-96A7-433B-84CF-D467888B56F7}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
