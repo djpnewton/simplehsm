@@ -1,8 +1,36 @@
-/*
- * deephist.h
+/**
+ * @file
+ * @author  Suriyan Laohaprapanon <suriyant@gmail.com>
+ * @version 1.0
  *
- *  Author: suriyan
+ * @section LICENSE
+ *
+ * Copyright (c) 2010 Suriyan Laohaprapanon
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @section DESCRIPTION
+ *
+ * A nested deep history state machine. A nested deep history demo of the 
+ * simplehsm C implementation.
  */
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -159,20 +187,21 @@ stnext E(int signal, void* param)
 }
 
 /**
- * Show the status of the state machine by showing what states it is currently in
+ * Show the status of the state machine by showing what states it is currently
+ * in
  * 
  * @param hsm The state machine
  */
 void show_status(simplehsm_t* hsm)
 {
-  printf("\nChecking States:\n");
-  printf("  in top state: %d\n  in A state: %d\n  in B state: %d\n  in C state: %d\n  in D state: %d\n  in E state: %d\n\n",
-         simplehsm_is_in_state(hsm, top),
-         simplehsm_is_in_state(hsm, A),
-         simplehsm_is_in_state(hsm, B),
-         simplehsm_is_in_state(hsm, C),
-         simplehsm_is_in_state(hsm, D),
-         simplehsm_is_in_state(hsm, E));
+    printf("\nChecking States:\n");
+    printf("  in top state: %d\n  in A state: %d\n  in B state: %d\n  in C state: %d\n  in D state: %d\n  in E state: %d\n\n",
+        simplehsm_is_in_state(hsm, top),
+        simplehsm_is_in_state(hsm, A),
+        simplehsm_is_in_state(hsm, B),
+        simplehsm_is_in_state(hsm, C),
+        simplehsm_is_in_state(hsm, D),
+        simplehsm_is_in_state(hsm, E));
 }
 
 /**
@@ -182,12 +211,12 @@ void show_status(simplehsm_t* hsm)
  */
 int main(int argc, char* argv[])
 {
-  simplehsm_initialize(&hsm, top);
-  show_status(&hsm);
-  simplehsm_signal_current_state(&hsm, SIG_A2B, NULL);
-  show_status(&hsm);
-  simplehsm_signal_current_state(&hsm, SIG_B2A, NULL);
-  show_status(&hsm);
-  return 0;
+    simplehsm_initialize(&hsm, top);
+    show_status(&hsm);
+    simplehsm_signal_current_state(&hsm, SIG_A2B, NULL);
+    show_status(&hsm);
+    simplehsm_signal_current_state(&hsm, SIG_B2A, NULL);
+    show_status(&hsm);
+    return 0;
 }
 
