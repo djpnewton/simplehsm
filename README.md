@@ -4,10 +4,10 @@ A simple hierarchical state machine in with implementations in C, Python and C#.
 
 turn this:
 
-![calculator state machine](http://imgur.com/hptSt.png)
+![calculator state machine](calc.png?raw-true)
 
 into this:
 
-![calculator GUI 1](http://imgur.com/SwqR4.png)
-![calculator GUI 2](http://imgur.com/hcSuP.png)
-![calculator GUI 3](http://imgur.com/GDuM2.png)
+![calculator GUI c#](calc_cs.png?raw-true)
+![calculator GUI python](calc_tk.png?raw-true)
+![calculator GUI c](calc_c.png?raw-true)
